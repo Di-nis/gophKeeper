@@ -52,7 +52,6 @@ message AddPaymentCardRequest {
 
 message AddPaymentCardResponse {
   string alias = 1;
-  string error = 2;
 }
 
 message GetPaymentCardRequest {
@@ -61,16 +60,11 @@ message GetPaymentCardRequest {
 
 message GetPaymentCardResponse {
   PaymentCard card = 1;
-  string error = 2;
 }
 
 message DelPaymentCardRequest {
-  string alias = 1;
+  repeated string alias = 1;
 }
-
-// message DelPaymentCardResponse {
-//   string error = 1;
-// }
 
 message AddBinaryRequest {
   Binary bin = 1;
@@ -78,7 +72,6 @@ message AddBinaryRequest {
 
 message AddBinaryResponse {
   string alias = 1;
-  string error = 2;
 }
 
 message GetBinaryRequest {
@@ -87,16 +80,11 @@ message GetBinaryRequest {
 
 message GetBinaryResponse {
   Binary bin = 1;
-  string error = 2;
 }
 
 message DelBinaryRequest {
-  string alias = 1;
+  repeated string alias = 1;
 }
-
-// message DelBinaryResponse {
-//   string error = 1;
-// }
 
 message AddTextRequest {
   Text text = 1;
@@ -104,7 +92,6 @@ message AddTextRequest {
 
 message AddTextResponse {
   string alias = 1;
-  string error = 2;
 }
 
 message GetTextRequest {
@@ -113,16 +100,11 @@ message GetTextRequest {
 
 message GetTextResponse {
   Text text = 1;
-  string error = 2;
 }
 
 message DelTextRequest {
-  string alias = 1;
+  repeated string alias = 1;
 }
-
-// message DelTextResponse {
-//   string error = 1;
-// }
 
 message UserDataResponse {
   repeated Credentials credentials = 1;

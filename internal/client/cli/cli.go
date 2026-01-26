@@ -13,7 +13,7 @@ const minLength = 4
 var ErrLenArgs = errors.New("command line argument length error")
 
 type grpcClient interface {
-	Credentials(model.Credentials) error 
+	AddCredentials(model.Credentials) error 
 }
 
 

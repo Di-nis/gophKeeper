@@ -248,9 +248,6 @@ func (b0 GetCredentialsRequest_builder) Build() *GetCredentialsRequest {
 type GetCredentialsResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Credentials *Credentials           `protobuf:"bytes,1,opt,name=credentials"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
@@ -287,23 +284,8 @@ func (x *GetCredentialsResponse) GetCredentials() *Credentials {
 	return nil
 }
 
-func (x *GetCredentialsResponse) GetError() string {
-	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
-	}
-	return ""
-}
-
 func (x *GetCredentialsResponse) SetCredentials(v *Credentials) {
 	x.xxx_hidden_Credentials = v
-}
-
-func (x *GetCredentialsResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *GetCredentialsResponse) HasCredentials() bool {
@@ -313,27 +295,14 @@ func (x *GetCredentialsResponse) HasCredentials() bool {
 	return x.xxx_hidden_Credentials != nil
 }
 
-func (x *GetCredentialsResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
 func (x *GetCredentialsResponse) ClearCredentials() {
 	x.xxx_hidden_Credentials = nil
-}
-
-func (x *GetCredentialsResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
 }
 
 type GetCredentialsResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Credentials *Credentials
-	Error       *string
 }
 
 func (b0 GetCredentialsResponse_builder) Build() *GetCredentialsResponse {
@@ -341,10 +310,6 @@ func (b0 GetCredentialsResponse_builder) Build() *GetCredentialsResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Credentials = b.Credentials
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Error = b.Error
-	}
 	return m0
 }
 
@@ -476,7 +441,6 @@ func (b0 AddPaymentCardRequest_builder) Build() *AddPaymentCardRequest {
 type AddPaymentCardResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -518,24 +482,9 @@ func (x *AddPaymentCardResponse) GetAlias() string {
 	return ""
 }
 
-func (x *AddPaymentCardResponse) GetError() string {
-	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
-	}
-	return ""
-}
-
 func (x *AddPaymentCardResponse) SetAlias(v string) {
 	x.xxx_hidden_Alias = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
-}
-
-func (x *AddPaymentCardResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *AddPaymentCardResponse) HasAlias() bool {
@@ -545,28 +494,15 @@ func (x *AddPaymentCardResponse) HasAlias() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
-func (x *AddPaymentCardResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
 func (x *AddPaymentCardResponse) ClearAlias() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Alias = nil
-}
-
-func (x *AddPaymentCardResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
 }
 
 type AddPaymentCardResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Alias *string
-	Error *string
 }
 
 func (b0 AddPaymentCardResponse_builder) Build() *AddPaymentCardResponse {
@@ -574,12 +510,8 @@ func (b0 AddPaymentCardResponse_builder) Build() *AddPaymentCardResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Alias != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
 		x.xxx_hidden_Alias = b.Alias
-	}
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Error = b.Error
 	}
 	return m0
 }
@@ -663,13 +595,10 @@ func (b0 GetPaymentCardRequest_builder) Build() *GetPaymentCardRequest {
 }
 
 type GetPaymentCardResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Card        *PaymentCard           `protobuf:"bytes,1,opt,name=card"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Card *PaymentCard           `protobuf:"bytes,1,opt,name=card"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetPaymentCardResponse) Reset() {
@@ -704,23 +633,8 @@ func (x *GetPaymentCardResponse) GetCard() *PaymentCard {
 	return nil
 }
 
-func (x *GetPaymentCardResponse) GetError() string {
-	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
-	}
-	return ""
-}
-
 func (x *GetPaymentCardResponse) SetCard(v *PaymentCard) {
 	x.xxx_hidden_Card = v
-}
-
-func (x *GetPaymentCardResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *GetPaymentCardResponse) HasCard() bool {
@@ -730,27 +644,14 @@ func (x *GetPaymentCardResponse) HasCard() bool {
 	return x.xxx_hidden_Card != nil
 }
 
-func (x *GetPaymentCardResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
 func (x *GetPaymentCardResponse) ClearCard() {
 	x.xxx_hidden_Card = nil
-}
-
-func (x *GetPaymentCardResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
 }
 
 type GetPaymentCardResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Card  *PaymentCard
-	Error *string
+	Card *PaymentCard
 }
 
 func (b0 GetPaymentCardResponse_builder) Build() *GetPaymentCardResponse {
@@ -758,20 +659,14 @@ func (b0 GetPaymentCardResponse_builder) Build() *GetPaymentCardResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Card = b.Card
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Error = b.Error
-	}
 	return m0
 }
 
 type DelPaymentCardRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Alias []string               `protobuf:"bytes,1,rep,name=alias"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *DelPaymentCardRequest) Reset() {
@@ -799,47 +694,28 @@ func (x *DelPaymentCardRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DelPaymentCardRequest) GetAlias() string {
+func (x *DelPaymentCardRequest) GetAlias() []string {
 	if x != nil {
-		if x.xxx_hidden_Alias != nil {
-			return *x.xxx_hidden_Alias
-		}
-		return ""
+		return x.xxx_hidden_Alias
 	}
-	return ""
+	return nil
 }
 
-func (x *DelPaymentCardRequest) SetAlias(v string) {
-	x.xxx_hidden_Alias = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *DelPaymentCardRequest) HasAlias() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *DelPaymentCardRequest) ClearAlias() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Alias = nil
+func (x *DelPaymentCardRequest) SetAlias(v []string) {
+	x.xxx_hidden_Alias = v
 }
 
 type DelPaymentCardRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Alias *string
+	Alias []string
 }
 
 func (b0 DelPaymentCardRequest_builder) Build() *DelPaymentCardRequest {
 	m0 := &DelPaymentCardRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Alias != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Alias = b.Alias
-	}
+	x.xxx_hidden_Alias = b.Alias
 	return m0
 }
 
@@ -914,7 +790,6 @@ func (b0 AddBinaryRequest_builder) Build() *AddBinaryRequest {
 type AddBinaryResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -956,24 +831,9 @@ func (x *AddBinaryResponse) GetAlias() string {
 	return ""
 }
 
-func (x *AddBinaryResponse) GetError() string {
-	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
-	}
-	return ""
-}
-
 func (x *AddBinaryResponse) SetAlias(v string) {
 	x.xxx_hidden_Alias = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
-}
-
-func (x *AddBinaryResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *AddBinaryResponse) HasAlias() bool {
@@ -983,28 +843,15 @@ func (x *AddBinaryResponse) HasAlias() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
-func (x *AddBinaryResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
 func (x *AddBinaryResponse) ClearAlias() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Alias = nil
-}
-
-func (x *AddBinaryResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
 }
 
 type AddBinaryResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Alias *string
-	Error *string
 }
 
 func (b0 AddBinaryResponse_builder) Build() *AddBinaryResponse {
@@ -1012,12 +859,8 @@ func (b0 AddBinaryResponse_builder) Build() *AddBinaryResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Alias != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
 		x.xxx_hidden_Alias = b.Alias
-	}
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Error = b.Error
 	}
 	return m0
 }
@@ -1101,13 +944,10 @@ func (b0 GetBinaryRequest_builder) Build() *GetBinaryRequest {
 }
 
 type GetBinaryResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Bin         *Binary                `protobuf:"bytes,1,opt,name=bin"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Bin *Binary                `protobuf:"bytes,1,opt,name=bin"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *GetBinaryResponse) Reset() {
@@ -1142,23 +982,8 @@ func (x *GetBinaryResponse) GetBin() *Binary {
 	return nil
 }
 
-func (x *GetBinaryResponse) GetError() string {
-	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
-	}
-	return ""
-}
-
 func (x *GetBinaryResponse) SetBin(v *Binary) {
 	x.xxx_hidden_Bin = v
-}
-
-func (x *GetBinaryResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *GetBinaryResponse) HasBin() bool {
@@ -1168,27 +993,14 @@ func (x *GetBinaryResponse) HasBin() bool {
 	return x.xxx_hidden_Bin != nil
 }
 
-func (x *GetBinaryResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
 func (x *GetBinaryResponse) ClearBin() {
 	x.xxx_hidden_Bin = nil
-}
-
-func (x *GetBinaryResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
 }
 
 type GetBinaryResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Bin   *Binary
-	Error *string
+	Bin *Binary
 }
 
 func (b0 GetBinaryResponse_builder) Build() *GetBinaryResponse {
@@ -1196,20 +1008,14 @@ func (b0 GetBinaryResponse_builder) Build() *GetBinaryResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Bin = b.Bin
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Error = b.Error
-	}
 	return m0
 }
 
 type DelBinaryRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Alias []string               `protobuf:"bytes,1,rep,name=alias"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *DelBinaryRequest) Reset() {
@@ -1237,47 +1043,28 @@ func (x *DelBinaryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DelBinaryRequest) GetAlias() string {
+func (x *DelBinaryRequest) GetAlias() []string {
 	if x != nil {
-		if x.xxx_hidden_Alias != nil {
-			return *x.xxx_hidden_Alias
-		}
-		return ""
+		return x.xxx_hidden_Alias
 	}
-	return ""
+	return nil
 }
 
-func (x *DelBinaryRequest) SetAlias(v string) {
-	x.xxx_hidden_Alias = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *DelBinaryRequest) HasAlias() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *DelBinaryRequest) ClearAlias() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Alias = nil
+func (x *DelBinaryRequest) SetAlias(v []string) {
+	x.xxx_hidden_Alias = v
 }
 
 type DelBinaryRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Alias *string
+	Alias []string
 }
 
 func (b0 DelBinaryRequest_builder) Build() *DelBinaryRequest {
 	m0 := &DelBinaryRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Alias != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Alias = b.Alias
-	}
+	x.xxx_hidden_Alias = b.Alias
 	return m0
 }
 
@@ -1352,7 +1139,6 @@ func (b0 AddTextRequest_builder) Build() *AddTextRequest {
 type AddTextResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -1394,24 +1180,9 @@ func (x *AddTextResponse) GetAlias() string {
 	return ""
 }
 
-func (x *AddTextResponse) GetError() string {
-	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
-	}
-	return ""
-}
-
 func (x *AddTextResponse) SetAlias(v string) {
 	x.xxx_hidden_Alias = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
-}
-
-func (x *AddTextResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *AddTextResponse) HasAlias() bool {
@@ -1421,28 +1192,15 @@ func (x *AddTextResponse) HasAlias() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
-func (x *AddTextResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
 func (x *AddTextResponse) ClearAlias() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Alias = nil
-}
-
-func (x *AddTextResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
 }
 
 type AddTextResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Alias *string
-	Error *string
 }
 
 func (b0 AddTextResponse_builder) Build() *AddTextResponse {
@@ -1450,12 +1208,8 @@ func (b0 AddTextResponse_builder) Build() *AddTextResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Alias != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
 		x.xxx_hidden_Alias = b.Alias
-	}
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Error = b.Error
 	}
 	return m0
 }
@@ -1539,13 +1293,10 @@ func (b0 GetTextRequest_builder) Build() *GetTextRequest {
 }
 
 type GetTextResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Text        *Text                  `protobuf:"bytes,1,opt,name=text"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Text *Text                  `protobuf:"bytes,1,opt,name=text"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetTextResponse) Reset() {
@@ -1580,23 +1331,8 @@ func (x *GetTextResponse) GetText() *Text {
 	return nil
 }
 
-func (x *GetTextResponse) GetError() string {
-	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
-	}
-	return ""
-}
-
 func (x *GetTextResponse) SetText(v *Text) {
 	x.xxx_hidden_Text = v
-}
-
-func (x *GetTextResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *GetTextResponse) HasText() bool {
@@ -1606,27 +1342,14 @@ func (x *GetTextResponse) HasText() bool {
 	return x.xxx_hidden_Text != nil
 }
 
-func (x *GetTextResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
 func (x *GetTextResponse) ClearText() {
 	x.xxx_hidden_Text = nil
-}
-
-func (x *GetTextResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
 }
 
 type GetTextResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Text  *Text
-	Error *string
+	Text *Text
 }
 
 func (b0 GetTextResponse_builder) Build() *GetTextResponse {
@@ -1634,20 +1357,14 @@ func (b0 GetTextResponse_builder) Build() *GetTextResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Text = b.Text
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Error = b.Error
-	}
 	return m0
 }
 
 type DelTextRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Alias []string               `protobuf:"bytes,1,rep,name=alias"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *DelTextRequest) Reset() {
@@ -1675,47 +1392,28 @@ func (x *DelTextRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DelTextRequest) GetAlias() string {
+func (x *DelTextRequest) GetAlias() []string {
 	if x != nil {
-		if x.xxx_hidden_Alias != nil {
-			return *x.xxx_hidden_Alias
-		}
-		return ""
+		return x.xxx_hidden_Alias
 	}
-	return ""
+	return nil
 }
 
-func (x *DelTextRequest) SetAlias(v string) {
-	x.xxx_hidden_Alias = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *DelTextRequest) HasAlias() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *DelTextRequest) ClearAlias() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Alias = nil
+func (x *DelTextRequest) SetAlias(v []string) {
+	x.xxx_hidden_Alias = v
 }
 
 type DelTextRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Alias *string
+	Alias []string
 }
 
 func (b0 DelTextRequest_builder) Build() *DelTextRequest {
 	m0 := &DelTextRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Alias != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Alias = b.Alias
-	}
+	x.xxx_hidden_Alias = b.Alias
 	return m0
 }
 
@@ -2571,48 +2269,41 @@ const file_pkg_proto_gophkeeper_proto_rawDesc = "" +
 	"\x16AddCredentialsResponse\x12\x14\n" +
 	"\x05alias\x18\x01 \x01(\tR\x05alias\"-\n" +
 	"\x15GetCredentialsRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\"d\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"N\n" +
 	"\x16GetCredentialsResponse\x124\n" +
-	"\vcredentials\x18\x01 \x01(\v2\x12.proto.CredentialsR\vcredentials\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"-\n" +
+	"\vcredentials\x18\x01 \x01(\v2\x12.proto.CredentialsR\vcredentials\"-\n" +
 	"\x15DelCredentialsRequest\x12\x14\n" +
 	"\x05alias\x18\x01 \x03(\tR\x05alias\"?\n" +
 	"\x15AddPaymentCardRequest\x12&\n" +
-	"\x04card\x18\x01 \x01(\v2\x12.proto.PaymentCardR\x04card\"D\n" +
+	"\x04card\x18\x01 \x01(\v2\x12.proto.PaymentCardR\x04card\".\n" +
 	"\x16AddPaymentCardResponse\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"-\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"-\n" +
 	"\x15GetPaymentCardRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\"V\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"@\n" +
 	"\x16GetPaymentCardResponse\x12&\n" +
-	"\x04card\x18\x01 \x01(\v2\x12.proto.PaymentCardR\x04card\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"-\n" +
+	"\x04card\x18\x01 \x01(\v2\x12.proto.PaymentCardR\x04card\"-\n" +
 	"\x15DelPaymentCardRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\"3\n" +
+	"\x05alias\x18\x01 \x03(\tR\x05alias\"3\n" +
 	"\x10AddBinaryRequest\x12\x1f\n" +
-	"\x03bin\x18\x01 \x01(\v2\r.proto.BinaryR\x03bin\"?\n" +
+	"\x03bin\x18\x01 \x01(\v2\r.proto.BinaryR\x03bin\")\n" +
 	"\x11AddBinaryResponse\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"(\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"(\n" +
 	"\x10GetBinaryRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\"J\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"4\n" +
 	"\x11GetBinaryResponse\x12\x1f\n" +
-	"\x03bin\x18\x01 \x01(\v2\r.proto.BinaryR\x03bin\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"(\n" +
+	"\x03bin\x18\x01 \x01(\v2\r.proto.BinaryR\x03bin\"(\n" +
 	"\x10DelBinaryRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\"1\n" +
+	"\x05alias\x18\x01 \x03(\tR\x05alias\"1\n" +
 	"\x0eAddTextRequest\x12\x1f\n" +
-	"\x04text\x18\x01 \x01(\v2\v.proto.TextR\x04text\"=\n" +
+	"\x04text\x18\x01 \x01(\v2\v.proto.TextR\x04text\"'\n" +
 	"\x0fAddTextResponse\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"&\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"&\n" +
 	"\x0eGetTextRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\"H\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"2\n" +
 	"\x0fGetTextResponse\x12\x1f\n" +
-	"\x04text\x18\x01 \x01(\v2\v.proto.TextR\x04text\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"&\n" +
+	"\x04text\x18\x01 \x01(\v2\v.proto.TextR\x04text\"&\n" +
 	"\x0eDelTextRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x01(\tR\x05alias\"\xc6\x01\n" +
+	"\x05alias\x18\x01 \x03(\tR\x05alias\"\xc6\x01\n" +
 	"\x10UserDataResponse\x124\n" +
 	"\vcredentials\x18\x01 \x03(\v2\x12.proto.CredentialsR\vcredentials\x124\n" +
 	"\vpaymentCard\x18\x02 \x03(\v2\x12.proto.PaymentCardR\vpaymentCard\x12%\n" +
