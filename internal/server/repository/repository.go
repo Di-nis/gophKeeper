@@ -19,4 +19,6 @@ var (
 	ErrNoData = errors.New("no data")
 
 	ErrUserAlreadyExists = errors.New("data already exist")
+
+	ErrUnknownType = errors.New("unknown type")
 )

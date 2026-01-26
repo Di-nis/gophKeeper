@@ -17,60 +17,41 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-// CredentialsService - интерфейс, включащий методы по работе с данными типа "логин/пароль".
-type CredentialsService interface {
-	CreateCredentials(context.Context, *model.Credentials) error
-	GetCredentials(context.Context, *model.Credentials) error
-	DeleteCredentials(context.Context, []model.Credentials) error
+// Creater - интерфейс для создания данных в базе данных.
+type Creater interface {
+	Create(context.Context, any) error
 }
 
-// PaymentCardService - интерфейс, включащий методы по работе с данными типа "банковская карта".
-type PaymentCardService interface {
-	CreatePaymentCard(context.Context, model.PaymentCard) error
-	GetPaymentCard(context.Context, string) (model.PaymentCard, error)
-	DeletePaymentCard(context.Context, string) error
-}
-
-// BinaryService - интерфейс, включащий методы по работе с данными типа "бинарные данные".
-type BinaryService interface {
-	CreateBinary(context.Context, model.Binary) error
-	GetBinary(context.Context, string) (model.Binary, error)
-	DeleteBinary(context.Context, string) error
-}
-
-// TextService - интерфейс, включащий методы по работе с данными типа "текстовые данные".
-type TextService interface {
-	CreateText(context.Context, model.Text) error
-	GetText(context.Context, string) (model.Text, error)
-	DeleteText(context.Context, string) error
-}
-
-// GetterService - интерфейс, включащий методы по получению всех данных пользователя.
-type GetterService interface {
+// Getter - интерфейс, включащий методы по получению всех данных пользователя.
+type Getter interface {
+	Get(context.Context, any) error
 	GetAll(context.Context, model.UserID) ([]model.Credentials, []model.PaymentCard, []model.Binary, []model.Text, error)
+}
+
+// Deleter - интерфейс для удаления данных из базы данных.
+type Deleter interface {
+	Delete(context.Context, []any) error
+}
+
+// Service - интерфейс для работы с данными.
+type Service interface {
+	Creater
+	Getter
+	Deleter
 }
 
 // Handler поддерживает все необходимые методы сервера.
 type Handler struct {
 	pb.GophKeeperServiceServer
-	credService CredentialsService
-	cardService PaymentCardService
-	binService  BinaryService
-	textService TextService
-	getter      GetterService
-	Config      *config.Config
+	usecase Service
+	Config  *config.Config
 }
 
 // New - создание нового сервера.
-func New(cred CredentialsService, card PaymentCardService, bin BinaryService, text TextService, getter GetterService,
-	config *config.Config) *Handler {
+func New(usecase Service, config *config.Config) *Handler {
 	return &Handler{
-		credService: cred,
-		cardService: card,
-		binService:  bin,
-		textService: text,
-		getter:      getter,
-		Config:      config,
+		usecase: usecase,
+		Config:  config,
 	}
 }
 
@@ -88,7 +69,7 @@ func (h *Handler) ListUserData(ctx context.Context, _ *emptypb.Empty) (*pb.UserD
 
 	userID := model.UserID("2345423rfsdvf")
 
-	creds, cards, bins, texts, err = h.getter.GetAll(ctx, userID)
+	creds, cards, bins, texts, err = h.usecase.GetAll(ctx, userID)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "internal error")
 	}
@@ -113,37 +94,76 @@ func (h *Handler) AddCredentials(ctx context.Context, in *pb.AddCredentialsReque
 	userID := model.UserID("2345423rfsdvf")
 	// TODO: userID := ctx.Value(constants.UserIDKey).(string)
 
-	credentialsPb := in.GetCredentials()
+	credPb := in.GetCredentials()
 
-	credentials := model.Credentials{
+	cred := model.Credentials{
 		UUID:     userID,
-		Login:    credentialsPb.GetLogin(),
-		Password: credentialsPb.GetPassword(),
-		Info:     credentialsPb.GetInfo(),
+		Login:    credPb.GetLogin(),
+		Password: credPb.GetPassword(),
+		Info:     credPb.GetInfo(),
 	}
 
-	err := h.credService.CreateCredentials(ctx, &credentials)
+	err := h.usecase.Create(ctx, &cred)
 	if err != nil {
 		if errors.Is(err, usecase.ErrDataRegistered) {
 			return nil, status.Error(codes.AlreadyExists, `credentials already exist`)
 		}
 		return nil, status.Error(codes.Internal, "internal error")
 	}
-	response.SetAlias(credentials.Alias)
+	response.SetAlias(cred.Alias)
 
 	return &response, nil
 }
 
 // GetCredentials - получение информации о данных типа "логин/пароль".
 func (h *Handler) GetCredentials(ctx context.Context, in *pb.GetCredentialsRequest) (*pb.GetCredentialsResponse, error) {
-	var response *pb.GetCredentialsResponse
-	return response, nil
+	var response pb.GetCredentialsResponse
+
+	userID := model.UserID("2345423rfsdvf")
+	// TODO: userID := ctx.Value(constants.UserIDKey).(string)
+
+	alias := in.GetAlias()
+
+	cred := model.Credentials{
+		UUID:  userID,
+		Alias: alias,
+	}
+
+	err := h.usecase.Get(ctx, &cred)
+	if err != nil {
+		if errors.Is(err, usecase.ErrDataNotFound) {
+			return nil, status.Error(codes.NotFound, `credentials not found`)
+		}
+		return nil, status.Error(codes.Internal, "internal error")
+	}
+
+	credPb := pb.Credentials{}
+
+	credPb.SetLogin(cred.Login)
+	credPb.SetPassword(cred.Password)
+	credPb.SetInfo(cred.Info)
+
+	response.SetCredentials(&credPb)
+
+	return &response, nil
 }
 
 // DeleteCredentials - удаление данных типа "логин/пароль".
+// TODO: не работает
 func (h *Handler) DeleteCredentials(ctx context.Context, in *pb.DelCredentialsRequest) (*emptypb.Empty, error) {
-	var response *emptypb.Empty
-	return response, nil
+	var response emptypb.Empty
+
+	aliases := in.GetAlias()
+	creds := make([]any, 0, len(aliases))
+	for _, alias := range aliases {
+		creds = append(creds, model.Credentials{Alias: alias})
+	}
+
+	err := h.usecase.Delete(ctx, creds)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal error")
+	}
+	return &response, nil
 }
 
 // PaymentCard - создание данных типа "банковская карта".

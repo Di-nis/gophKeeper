@@ -3,7 +3,8 @@ package data
 import (
 	"context"
 	"errors"
-	// "sync"+-
+
+	"sync"
 
 	"github.com/Di-nis/gophKeeper/internal/model"
 	crpt "github.com/Di-nis/gophKeeper/internal/server/crypto"
@@ -22,7 +23,13 @@ var (
 	ErrDataNotFound = errors.New("data not found")
 	// ErrDataRegistered - data already registered.
 	ErrDataRegistered = errors.New("data already registered")
+	// ErrGetRawValue - error get raw value.
+	ErrGetRawValue = errors.New("error get raw value")
+	// ErrDataUnsupportedType - unsupported data type.
+	ErrDataUnsupportedType = errors.New("data unsupported type")
 )
+
+type Data[T model.Credentials | model.PaymentCard | model.Binary | model.Text] []T
 
 // Pinger - интерфейс для проверки соединения с базой данных.
 type Pinger interface {
@@ -34,63 +41,60 @@ type Crypter interface {
 	Create(string, int) string
 }
 
-// EventPublisher - интерфейс для публикации событий.
-type EventPublisher interface {
-	Publish(context.Context, any) error
+// Inserter - интерфейс для вставки данных в базу данных.
+type Inserter interface {
+	Insert(context.Context, any) error
 }
 
-// Credentialer - интерфейс для создания данных типа "логин/пароль".
-type Credentialer interface {
-	InsertCredentials(context.Context, *model.Credentials) error
-	SelectCredentials(context.Context, *model.Credentials) error
-	SelectUserCredentials(context.Context, model.UserID) ([]model.Credentials, error)
-	DeleteCredentials(context.Context, []model.Credentials) error
+// Selecter - интерфейс для получения данных из базы данных.
+type Selecter interface {
+	Select(context.Context, any) error
+	SelectUserData(context.Context, model.UserID) ([]model.Credentials, []model.PaymentCard, []model.Binary, []model.Text, error)
 }
 
-type PaymentCarder interface {
-	InsertPaymentCard(context.Context, model.PaymentCard) error
-	SelectPaymentCard(context.Context, string) (model.PaymentCard, error)
-	SelectUserPaymentCards(context.Context, model.UserID) ([]model.PaymentCard, error)
-	DeletePaymentCard(context.Context, string) error
-}
-
-type Binarier interface {
-	InsertBinary(context.Context, model.Binary) error
-	SelectBinary(context.Context, string) (model.Binary, error)
-	SelectUserBinaries(context.Context, model.UserID) ([]model.Binary, error)
-	DeleteBinary(context.Context, string) error
-}
-
-type Texter interface {
-	InsertText(context.Context, model.Text) error
-	SelectText(context.Context, string) (model.Text, error)
-	SelectUserTexts(context.Context, model.UserID) ([]model.Text, error)
-	DeleteText(context.Context, string) error
+// Deleter - интерфейс для удаления данных из базы данных.
+type Deleter interface {
+	Delete(context.Context, any) error
 }
 
 // Repository - интерфейс для базы данных.
 type Repository interface {
 	Pinger
-	Credentialer
-	PaymentCarder
-	Binarier
-	Texter
+	Inserter
+	Selecter
+	Deleter
 	Close() error
 }
 
 // Usecase - реализация usecase для работы с данными.
 type Usecase struct {
-	Repo      Repository
-	crypto    Crypter
-	publisher EventPublisher
+	Repo   Repository
+	crypto Crypter
+}
+
+// New - создание структуры Usecase.
+func New(repo Repository) *Usecase {
+	return &Usecase{
+		Repo:   repo,
+		crypto: crpt.New(),
+	}
 }
 
 // CreateCredentials - создание данных типа "логин/пароль".
-func (u *Usecase) CreateCredentials(ctx context.Context, cred *model.Credentials) error {
-	raw := cred.Login + cred.Password + cred.Info
-	cred.Alias = u.crypto.Create(raw, aliasLength)
+func (u *Usecase) Create(ctx context.Context, data any) error {
+	var err error
+	raw, err := getRawValue(data)
+	if err != nil {
+		return err
+	}
+	alias := u.crypto.Create(raw, aliasLength)
 
-	if err := u.Repo.InsertCredentials(ctx, cred); err != nil {
+	err = updateData(data, alias)
+	if err != nil {
+		return err
+	}
+
+	if err := u.Repo.Insert(ctx, data); err != nil {
 		if errors.Is(err, repo.ErrDataAlreadyExists) {
 			return ErrDataRegistered
 		}
@@ -100,96 +104,14 @@ func (u *Usecase) CreateCredentials(ctx context.Context, cred *model.Credentials
 }
 
 // GetCredentials - получение информации о данных типа "логин/пароль".
-func (u *Usecase) GetCredentials(ctx context.Context, cred *model.Credentials) error {
-	err := u.Repo.SelectCredentials(ctx, cred)
+func (u *Usecase) Get(ctx context.Context, data any) error {
+	err := u.Repo.Select(ctx, data)
 	if err != nil {
 		if errors.Is(err, repo.ErrDataNotFound) {
 			return ErrDataNotFound
 		}
 		return err
 	}
-	return nil
-}
-
-// DeleteCredentials - удаление данных типа "логин/пароль".
-func (u *Usecase) DeleteCredentials(ctx context.Context, creds []model.Credentials) error {
-	// inChan := make(chan model.Credentials, 1024)
-	// resultChan := make(chan error, numWorkers)
-	// var wg sync.WaitGroup
-
-	// go func() {
-	// 	defer close(inChan)
-	// 	urlUseCase.generator(ctx, creds, inChan)
-	// }()
-
-	// for w := 1; w <= numWorkers; w++ {
-	// 	wg.Add(1)
-	// 	go func(id int) {
-	// 		defer wg.Done()
-	// 		urlUseCase.worker(ctx, inChan, resultChan)
-	// 	}(w)
-	// }
-
-	// go func() {
-	// 	wg.Wait()
-	// 	close(resultChan)
-	// }()
-
-	// var firstErr error
-	// for err := range resultChan {
-	// 	if err != nil && firstErr == nil {
-	// 		firstErr = err
-	// 	}
-	// }
-	// return firstErr
-	return nil
-}
-
-// CreatePaymentCard - создание данных типа "банковская карта".
-func (u *Usecase) CreatePaymentCard(ctx context.Context, card model.PaymentCard) error {
-	return nil
-}
-
-// GetPaymentCard - получение данных типа "банковская карта".
-func (u *Usecase) GetPaymentCard(ctx context.Context, alias string) (model.PaymentCard, error) {
-	var card model.PaymentCard
-	return card, nil
-}
-
-// DeletePaymentCard - удаление данных типа "банковская карта".
-func (u *Usecase) DeletePaymentCard(ctx context.Context, alias string) error {
-	return nil
-}
-
-// CreateBinary - создание бинарных данных.
-func (u *Usecase) CreateBinary(ctx context.Context, bin model.Binary) error {
-	return nil
-}
-
-// GetBinary - получение бинарных данных.
-func (u *Usecase) GetBinary(ctx context.Context, alias string) (model.Binary, error) {
-	var bin model.Binary
-	return bin, nil
-}
-
-// DeleteBinary - удаление бинарных данных.
-func (u *Usecase) DeleteBinary(ctx context.Context, alias string) error {
-	return nil
-}
-
-// CreateText - создание текстовых данных.
-func (u *Usecase) CreateText(ctx context.Context, text model.Text) error {
-	return nil
-}
-
-// GetText - получение текстовых данных.
-func (u *Usecase) GetText(ctx context.Context, alias string) (model.Text, error) {
-	var text model.Text
-	return text, nil
-}
-
-// DeleteText - удаление текстовых данных.
-func (u *Usecase) DeleteText(ctx context.Context, alias string) error {
 	return nil
 }
 
@@ -204,20 +126,82 @@ func (u *Usecase) GetAll(ctx context.Context, userID model.UserID) (
 		texts []model.Text
 	)
 
-	if creds, err = u.Repo.SelectUserCredentials(ctx, userID); err != nil {
+	if creds, cards, bins, texts, err = u.Repo.SelectUserData(ctx, userID); err != nil {
 		return nil, nil, nil, nil, err
 	}
-	// if cards, err = u.Repo.SelectUserPaymentCards(ctx, userID); err != nil {
-
-	// }
 
 	return creds, cards, bins, texts, nil
 }
 
-// New - создание структуры Usecase.
-func New(repo Repository) *Usecase {
-	return &Usecase{
-		Repo:   repo,
-		crypto: crpt.New(),
+// Delete - удаление данных.
+func (u *Usecase) Delete(ctx context.Context, items []any) error {
+	inChan := make(chan any, 1024)
+	resultChan := make(chan error, numWorkers)
+	var wg sync.WaitGroup
+
+	go func() {
+		defer close(inChan)
+		u.generator(ctx, items, inChan)
+	}()
+
+	for w := 1; w <= numWorkers; w++ {
+		wg.Add(1)
+		go func(id int) {
+			defer wg.Done()
+			u.worker(ctx, inChan, resultChan)
+		}(w)
 	}
+
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	var firstErr error
+	for err := range resultChan {
+		if err != nil && firstErr == nil {
+			firstErr = err
+		}
+	}
+	return firstErr
+}
+
+// generator - генерирует сообщения в канал.
+func (u *Usecase) generator(ctx context.Context, items []any, inChan chan any) {
+	for _, d := range items {
+		select {
+		case <-ctx.Done():
+			return
+		case inChan <- d:
+		}
+	}
+}
+
+// worker - работник.
+func (u *Usecase) worker(ctx context.Context, items <-chan any, result chan error) {
+	itemsDb := make([]any, 0, 100)
+
+	for {
+		select {
+		case <-ctx.Done():
+			if len(itemsDb) > 0 {
+				result <- u.Repo.Delete(ctx, itemsDb)
+			}
+			return
+
+		case item, ok := <-items:
+			if !ok {
+				if len(itemsDb) > 0 {
+					result <- u.Repo.Delete(ctx, itemsDb)
+				}
+				return
+			}
+			itemsDb = append(itemsDb, item)
+			if len(itemsDb) >= 1 {
+				result <- u.Repo.Delete(ctx, itemsDb)
+				itemsDb = itemsDb[:0]
+			}
+		}
+	}
+
 }

@@ -36,9 +36,12 @@ type Credentials struct {
 	UUID     UserID `json:"-" db:"user_id"`
 	Login    string `json:"login" db:"login"`
 	Password string `json:"password" db:"password"`
-	Alias    string `json:"alias" db:"alias"`
+	Alias    string `json:"-" db:"alias"`
 	Info     string `json:"info" db:"info"`
 }
+
+func (c *Credentials) GetRaw() string    { return c.Login + c.Password + c.Info }
+func (c *Credentials) SetAlias(a string) { c.Alias = a }
 
 // PaymentCard - данные банковской карты.
 type PaymentCard struct {
@@ -52,6 +55,9 @@ type PaymentCard struct {
 	Info     string `json:"info" db:"info"`
 }
 
+func (p *PaymentCard) GetRaw() string    { return p.Number }
+func (p *PaymentCard) SetAlias(a string) { p.Alias = a }
+
 // Binary - бинарные данные.
 type Binary struct {
 	UUID  UserID `json:"-" db:"user_id"`
@@ -60,6 +66,9 @@ type Binary struct {
 	Info  string `json:"info" db:"info"`
 }
 
+func (b *Binary) GetRaw() string    { return string(b.Data) + b.Info }
+func (b *Binary) SetAlias(a string) { b.Alias = a }
+
 // Text - произвольные текстовые данные.
 type Text struct {
 	UUID  UserID `json:"-" db:"user_id"`
@@ -67,3 +76,6 @@ type Text struct {
 	Alias string `json:"alias" db:"alias"`
 	Info  string `json:"info" db:"info"`
 }
+
+func (t *Text) GetRaw() string    { return t.Data + t.Info }
+func (t *Text) SetAlias(a string) { t.Alias = a }

@@ -148,11 +148,79 @@ func (repo *Repo) ExistHashPassword(ctx context.Context, passwordHash string) (b
 	return false, nil
 }
 
-// InsertCredentials - добавление учетных данных.
-func (repo *Repo) InsertCredentials(ctx context.Context, cred *model.Credentials) error {
+// Insert - добавление данных.
+func (repo *Repo) Insert(ctx context.Context, data any) error {
 	repo.m.Lock()
 	defer repo.m.Unlock()
 
+	switch d := data.(type) {
+	case *model.Credentials:
+		return repo.InsertCredentials(ctx, d)
+	case *model.PaymentCard:
+		return repo.InsertPaymentCard(ctx, d)
+	case *model.Binary:
+		return repo.InsertBinary(ctx, d)
+	case *model.Text:
+		return repo.InsertText(ctx, d)
+	default:
+		return fmt.Errorf("path: internal/server/repository/postgres/postgres.go, func Insert(): %w", repository.ErrUnknownType)
+	}
+}
+
+// Select - получение данных.
+func (repo *Repo) Select(ctx context.Context, data any) error {
+	repo.m.RLock()
+	defer repo.m.RUnlock()
+
+	switch d := data.(type) {
+	case *model.Credentials:
+		return repo.SelectCredentials(ctx, d)
+	case *model.PaymentCard:
+		return repo.SelectPaymentCard(ctx, d)
+	default:
+		return fmt.Errorf("path: internal/server/repository/postgres/postgres.go, func Select(): %w", repository.ErrUnknownType)
+	}
+}
+
+// Delete - удаление данных.
+func (repo *Repo) Delete(ctx context.Context, data any) error {
+	repo.m.Lock()
+	defer repo.m.Unlock()
+
+	switch d := data.(type) {
+	case []*model.Credentials:
+		return repo.DeleteCredentials(ctx, d)
+	case []*model.PaymentCard:
+		return repo.DeletePaymentCard(ctx, d)
+	case []*model.Binary:
+		return repo.DeleteBinary(ctx, d)
+	case []*model.Text:
+		return repo.DeleteText(ctx, d)
+	}
+
+	return nil
+}
+
+// SelectUserData - получение данных пользователя.
+func (repo *Repo) SelectUserData(ctx context.Context, userID model.UserID) ([]model.Credentials, []model.PaymentCard, []model.Binary, []model.Text, error) {
+	var errs []error
+	creds, err := repo.SelectUserCredentials(ctx, userID)
+	if err != nil {
+		errs = append(errs, err)
+	}
+	cards, err := repo.SelectUserPaymentCards(ctx, userID)
+	if err != nil {
+		errs = append(errs, err)
+	}
+	// bins, err := repo.SelectUserBinary(ctx, userID)
+	// if err != nil {
+
+	// }
+	return creds, cards, nil, nil, errors.Join(errs...)
+}
+
+// InsertCredentials - добавление учетных данных.
+func (repo *Repo) InsertCredentials(ctx context.Context, cred *model.Credentials) error {
 	query := "INSERT INTO credentials (user_id, login, password, alias, info) VALUES ($1, $2, $3, $4, $5)"
 
 	_, err := repo.db.ExecContext(ctx, query, cred.UUID, cred.Login, cred.Password, cred.Alias, cred.Info)
@@ -169,9 +237,6 @@ func (repo *Repo) InsertCredentials(ctx context.Context, cred *model.Credentials
 
 // SelectCredentials - получение учетных данных.
 func (repo *Repo) SelectCredentials(ctx context.Context, cred *model.Credentials) error {
-	repo.m.RLock()
-	defer repo.m.RUnlock()
-
 	query := "SELECT login, password, info FROM credentials WHERE alias = $1 AND user_id = $2"
 	row := repo.db.QueryRowContext(ctx, query, cred.Alias, cred.UUID)
 
@@ -217,7 +282,7 @@ func (repo *Repo) SelectUserCredentials(ctx context.Context, userID model.UserID
 }
 
 // DeleteCredentials - удаление учетных данных.
-func (repo *Repo) DeleteCredentials(ctx context.Context, creds []model.Credentials) error {
+func (repo *Repo) DeleteCredentials(ctx context.Context, creds []*model.Credentials) error {
 	repo.m.Lock()
 	defer repo.m.Unlock()
 
@@ -251,15 +316,13 @@ func (repo *Repo) DeleteCredentials(ctx context.Context, creds []model.Credentia
 }
 
 // InsertPaymentCard - добавление банковской карты.
-func (repo *Repo) InsertPaymentCard(ctx context.Context, paymentCard model.PaymentCard) error {
+func (repo *Repo) InsertPaymentCard(ctx context.Context, paymentCard *model.PaymentCard) error {
 	return nil
 }
 
 // SelectPaymentCard - получение данных банковской карты.
-func (repo *Repo) SelectPaymentCard(ctx context.Context, alias string) (model.PaymentCard, error) {
-	var card model.PaymentCard
-
-	return card, nil
+func (repo *Repo) SelectPaymentCard(ctx context.Context, card *model.PaymentCard) error {
+	return nil
 }
 
 // SelectUserPaymentCards - получение всех данных типа "банковская карта" пользователя.
@@ -270,20 +333,18 @@ func (repo *Repo) SelectUserPaymentCards(ctx context.Context, userID model.UserI
 }
 
 // DeletePaymentCard - удаление данных банковской карты.
-func (repo *Repo) DeletePaymentCard(ctx context.Context, alias string) error {
+func (repo *Repo) DeletePaymentCard(ctx context.Context, card []*model.PaymentCard) error {
 	return nil
 }
 
 // InsertBinary - добавление бинарных данных.
-func (repo *Repo) InsertBinary(ctx context.Context, paymentCard model.Binary) error {
+func (repo *Repo) InsertBinary(ctx context.Context, paymentCard *model.Binary) error {
 	return nil
 }
 
 // SelectBinary - получение бинарных данных.
-func (repo *Repo) SelectBinary(ctx context.Context, alias string) (model.Binary, error) {
-	var bin model.Binary
-
-	return bin, nil
+func (repo *Repo) SelectBinary(ctx context.Context, bin *model.Binary) error {
+	return nil
 }
 
 // SelectUserBinary - получение всех бинарных данных пользователя.
@@ -294,20 +355,18 @@ func (repo *Repo) SelectUserBinaries(ctx context.Context, userID model.UserID) (
 }
 
 // DeleteBinary - удаление бинарных данных.
-func (repo *Repo) DeleteBinary(ctx context.Context, alias string) error {
+func (repo *Repo) DeleteBinary(ctx context.Context, bin []*model.Binary) error {
 	return nil
 }
 
 // InsertText - добавление текстовых данных в БД.
-func (repo *Repo) InsertText(ctx context.Context, paymentCard model.Text) error {
+func (repo *Repo) InsertText(ctx context.Context, paymentCard *model.Text) error {
 	return nil
 }
 
 // SelectText - получение текстовых данных.
-func (repo *Repo) SelectText(ctx context.Context, alias string) (model.Text, error) {
-	var text model.Text
-
-	return text, nil
+func (repo *Repo) SelectText(ctx context.Context, text *model.Text) error {
+	return nil
 }
 
 // SelectUserTexts - получение всех текстовых данных пользователя.
@@ -318,6 +377,6 @@ func (repo *Repo) SelectUserTexts(ctx context.Context, userID model.UserID) ([]m
 }
 
 // DeleteText - удаление текстовых данных.
-func (repo *Repo) DeleteText(ctx context.Context, alias string) error {
+func (repo *Repo) DeleteText(ctx context.Context, text []*model.Text) error {
 	return nil
 }

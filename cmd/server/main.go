@@ -52,9 +52,8 @@ func main() {
 	}
 
 	dataUc := dataUsecase.New(repo)
-	credUsecase, cardUsecase, binUsecase, textUsecase, getterUsecase := dataUc, dataUc, dataUc, dataUc, dataUc
 
-	dataHandler := grpcHandler.New(credUsecase, cardUsecase, binUsecase, textUsecase, getterUsecase, cfg)
+	dataHandler := grpcHandler.New(dataUc, cfg)
 	grpcSrv, err := grpcServer.New(cfg, dataHandler)
 	if err != nil {
 		logger.Sugar.Fatalf("internal/server/app/app.go, func Start(), failed to start grpc-server: %v", err)

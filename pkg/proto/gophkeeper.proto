@@ -40,16 +40,11 @@ message GetCredentialsRequest {
 
 message GetCredentialsResponse {
   Credentials credentials = 1;
-  string error = 2;
 }
 
 message DelCredentialsRequest {
   repeated string alias = 1;
 }
-
-// message DelCredentialsResponse {
-//   string error = 1;
-// }
 
 message AddPaymentCardRequest {
   PaymentCard card = 1;
