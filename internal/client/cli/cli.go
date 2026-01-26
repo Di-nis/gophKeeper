@@ -1,54 +1,62 @@
 package cli
 
 import (
-	"errors"
+	"bufio"
+	"flag"
 	"fmt"
 	"os"
+	"strings"
+
+	// "fmt"
+	// "os"
 
 	"github.com/Di-nis/gophKeeper/internal/model"
 )
 
-const minLength = 4
+func Parser() *model.Command {
+	var (
+		method, item, value string
+		command             *model.Command
+	)
 
-var ErrLenArgs = errors.New("command line argument length error")
+	flag.StringVar(&method, "method", "", "method request")
+	flag.StringVar(&item, "item", "", "item type")
+	flag.StringVar(&value, "value", "", "values")
 
-type grpcClient interface {
-	AddCredentials(model.Credentials) error 
-}
+	flag.Parse()
 
-
-type Cli struct{
-	Args []string
-	grpcClient 
-}
-
-func New(grpcClient) (*Cli, error)  {
-	a := os.Args
-	fmt.Println(a)
-	if len(os.Args) < minLength {
-		return nil, ErrLenArgs
-	}
-	return &Cli{
-		Args: os.Args[1:],
-	}, nil
-}
-
-func (cli *Cli) Router() {
-	switch {
-	case os.Args[1] == "add" && os.Args[2] == "credentials":
-		cred := model.Credentials{
-			Login: os.Args[3],
-			Password: os.Args[4],
-			Info: os.Args[5],
+	// Если аргументы CLI переданы, используем их
+	if method != "" && item != "" {
+		command = &model.Command{
+			Method: method,
+			Item:   item,
+			Value:  strings.Split(value, " "),
 		}
-		err := cli.Credentials(cred)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println("данные сохранены")
-	// case os.Args[1] == "list":
-	// 	list()
-	// case os.Args[1] == "remove":
-	// 	remove()
+		fmt.Printf("%+v", command)
+		return command
 	}
+
+	// Иначе используем интерактивный ввод
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("Введите метод отправки: ")
+	method, _ = reader.ReadString('\n')
+	method = strings.TrimSpace(method)
+
+	fmt.Print("Введите тип данных: ")
+	item, _ = reader.ReadString('\n')
+	item = strings.TrimSpace(item)
+
+	fmt.Print("Введите значения через пробел: ")
+	value, _ = reader.ReadString('\n')
+	value = strings.TrimSpace(value)
+
+	command = &model.Command{
+		Method: method,
+		Item:   item,
+		Value:  strings.Split(value, " "),
+	}
+	fmt.Printf("%v", command)
+	return command
 }
+

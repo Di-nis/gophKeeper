@@ -5,6 +5,7 @@ package http
 import (
 	"errors"
 	"net/http"
+
 	// "net/http/pprof"
 	// "reflect"
 
@@ -88,7 +89,6 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 }
-
 
 // // Login - аутентификация пользователя.
 // func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {

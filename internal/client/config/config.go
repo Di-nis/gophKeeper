@@ -12,9 +12,10 @@ import (
 
 // Config - структура конфигурации приложения.
 type Config struct {
-	ServerAddress string `env:"SERVER_ADDRESS"`
-	LogLevel      string `env:"LOG_LEVEL"`
-	Config        string `env:"CONFIG"`
+	ServerAddressHTTP string `env:"server_address_HTTP"`
+	ServerAddressGRPC string `env:"server_address_gRPC"`
+	LogLevel          string `env:"LOG_LEVEL"`
+	Config            string `env:"CONFIG"`
 }
 
 // New - функция для создания конфигурации.
@@ -33,7 +34,7 @@ func (c *Config) Load() error {
 	}
 
 	// второй приоритет - из аргументов командной строки
-	c.loanFromFlags()
+	// c.loanFromFlags()
 
 	// третий приоритет - из файла
 	err = c.loanFromFile()
@@ -53,16 +54,20 @@ func (c *Config) loanFromEnv() error {
 
 // loanFromFlags - загрузка конфигурации из аргументов командной строки.
 func (c *Config) loanFromFlags() {
-	var serverAddress, logLevel, config string
+	var serverAddressHTTP, serverAddressGRPC, logLevel, config string
 
-	flag.StringVar(&serverAddress, "a", "", "URL")
+	flag.StringVar(&serverAddressHTTP, "http", "", "gophKeeper http-server address")
+	flag.StringVar(&serverAddressGRPC, "grpc", "", "gophKeeper grpc-server address")
 	flag.StringVar(&logLevel, "l", "info", "log level")
 	flag.StringVar(&config, "config", "", "path to the configuration file")
 
 	flag.Parse()
 
-	if c.ServerAddress == "" {
-		c.ServerAddress = serverAddress
+	if c.ServerAddressHTTP == "" {
+		c.ServerAddressHTTP = serverAddressHTTP
+	}
+	if c.ServerAddressGRPC == "" {
+		c.ServerAddressGRPC = serverAddressGRPC
 	}
 	if c.LogLevel == "" {
 		c.LogLevel = logLevel
@@ -79,7 +84,8 @@ func (c *Config) loanFromFile() error {
 	}
 
 	type ConfigAlias struct {
-		ServerAddress string `json:"server_address"`
+		ServerAddressHTTP string `json:"server_address_HTTP"`
+		ServerAddressGRPC string `json:"server_address_gRPC"`
 		LogLevel      string `json:"log_level"`
 	}
 
@@ -100,8 +106,11 @@ func (c *Config) loanFromFile() error {
 		return fmt.Errorf("path: internal/server/config/config.go, func loanFromJSON(), failed to unmarshal data: %w", err)
 	}
 
-	if c.ServerAddress == "" {
-		c.ServerAddress = configAlias.ServerAddress
+	if c.ServerAddressHTTP == "" {
+		c.ServerAddressHTTP = configAlias.ServerAddressHTTP
+	}
+	if c.ServerAddressGRPC == "" {
+		c.ServerAddressGRPC = configAlias.ServerAddressGRPC
 	}
 	if c.LogLevel == "" {
 		c.LogLevel = configAlias.LogLevel

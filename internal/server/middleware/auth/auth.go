@@ -17,9 +17,9 @@ import (
 type contextKey string
 
 const (
-	HeaderAuthorization = "authorization"
-	TokenExp             = time.Hour * 3
-	UserIDKey contextKey = "userID"
+	HeaderAuthorization            = "authorization"
+	TokenExp                       = time.Hour * 3
+	UserIDKey           contextKey = "userID"
 )
 
 // Claims — структура утверждений, которая включает стандартные утверждения

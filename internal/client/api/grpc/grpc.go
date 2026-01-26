@@ -241,7 +241,7 @@ func (c *Client) DelText(alias []string) error {
 	return nil
 }
 
-func (c *Client) ListUserData(userId model.UserID) ([]model.Credentials, []model.PaymentCard, []model.Binary, []model.Text, err) {
+func (c *Client) ListUserData(userId model.UserID) ([]model.Credentials, []model.PaymentCard, []model.Binary, []model.Text, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
 	defer cancel()
 
