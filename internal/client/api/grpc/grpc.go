@@ -32,7 +32,7 @@ func New(addr string) (*Client, error) {
 		// slog.Error("ошибка при установлении соединения с сервером", "error", err)
 		os.Exit(1)
 	}
-	defer conn.Close()
+	// defer conn.Close()
 
 	return &Client{
 		grpcClient: pb.NewGophKeeperServiceClient(conn),
@@ -241,7 +241,7 @@ func (c *Client) DelText(alias []string) error {
 	return nil
 }
 
-func (c *Client) ListUserData(userId model.UserID) ([]model.Credentials, []model.PaymentCard, []model.Binary, []model.Text, error) {
+func (c *Client) ListUserData(userID model.UserID) ([]model.Credentials, []model.PaymentCard, []model.Binary, []model.Text, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
 	defer cancel()
 

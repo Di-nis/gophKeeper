@@ -6,10 +6,6 @@ import (
 	"errors"
 	"net/http"
 
-	// "net/http/pprof"
-	// "reflect"
-
-	// "github.com/Di-nis/gophKeeper/internal/server/middleware/auth"
 	// "github.com/Di-nis/gophKeeper/internal/server/middleware/cidr"
 	"github.com/Di-nis/gophKeeper/internal/model"
 	"github.com/Di-nis/gophKeeper/internal/server/config"
@@ -30,7 +26,7 @@ type Pinger interface {
 // Auth - интерфейс для регистрации/авторизации.
 type Auth interface {
 	Register(context.Context, model.Auth) error
-	// Login(context.Context, model.Auth) error
+	Login(context.Context, model.Auth) (string, error)
 }
 
 // Handler - структура HTTP-хендлера.
@@ -90,39 +86,47 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// // Login - аутентификация пользователя.
-// func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-// 	c := model.Creds{}
+// Login - аутентификация пользователя.
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	a := model.Auth{}
 
-// 	if err := handler.ReadReq(r, &c); err != nil {
-// 		logger.Sugar.Errorf("cannot read request: %v", err)
-// 		w.WriteHeader(http.StatusBadRequest)
+	if err := readReq(r, &a); err != nil {
+		logger.Sugar.Errorf("cannot read request: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
 
-// 		return
-// 	}
+		return
+	}
 
-// 	jwtToken, err := h.service.Login(r.Context(), c)
-// 	if err != nil {
-// 		if errors.Is(err, repository.ErrUserNotFound) {
-// 			logger.Sugar.Errorf("user not found registered: %v", err)
-// 			w.WriteHeader(http.StatusUnauthorized)
+	jwtToken, err := h.Auth.Login(r.Context(), a)
+	if err != nil {
+		if errors.Is(err, user.ErrUserNotFound) {
+			logger.Sugar.Errorf("user not found registered: %v", err)
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		if errors.Is(err, user.ErrUserAlreadyExist) {
+			logger.Sugar.Errorf("can't register user: %v", err)
+			w.WriteHeader(http.StatusUnauthorized)
+		}
 
-// 			return
-// 		}
+		logger.Sugar.Errorf("can't register user: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
 
-// 		logger.Sugar.Errorf("can't register user: %v", err)
-// 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-// 		return
-// 	}
+	cookie := &http.Cookie{
+		Name:     "auth_user",
+		Value:    jwtToken,
+		Expires:  time.Now().Add(24 * time.Hour),
+		Path:     "/",
+		Domain:   "localhost",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   true,
+	}
 
-// 	cookieAuth := &http.Cookie{
-// 		Name:  "auth_user",
-// 		Value: jwtToken,
-// 		Path:  "/",
-// 	}
+	http.SetCookie(w, cookie)
 
-// 	http.SetCookie(w, cookieAuth)
-
-// 	w.WriteHeader(http.StatusOK)
-// }
+	w.WriteHeader(http.StatusOK)
+}

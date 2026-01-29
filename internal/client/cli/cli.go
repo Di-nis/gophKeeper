@@ -7,9 +7,6 @@ import (
 	"os"
 	"strings"
 
-	// "fmt"
-	// "os"
-
 	"github.com/Di-nis/gophKeeper/internal/model"
 )
 
@@ -30,9 +27,8 @@ func Parser() *model.Command {
 		command = &model.Command{
 			Method: method,
 			Item:   item,
-			Value:  strings.Split(value, " "),
+			Value:  strings.Split(value, "_"),
 		}
-		fmt.Printf("%+v", command)
 		return command
 	}
 
@@ -59,4 +55,3 @@ func Parser() *model.Command {
 	fmt.Printf("%v", command)
 	return command
 }
-

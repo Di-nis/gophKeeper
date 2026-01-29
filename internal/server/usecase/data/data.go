@@ -179,27 +179,27 @@ func (u *Usecase) generator(ctx context.Context, items []any, inChan chan any) {
 
 // worker - работник.
 func (u *Usecase) worker(ctx context.Context, items <-chan any, result chan error) {
-	itemsDb := make([]any, 0, 100)
+	itemsDB := make([]any, 0, 100)
 
 	for {
 		select {
 		case <-ctx.Done():
-			if len(itemsDb) > 0 {
-				result <- u.Repo.Delete(ctx, itemsDb)
+			if len(itemsDB) > 0 {
+				result <- u.Repo.Delete(ctx, itemsDB)
 			}
 			return
 
 		case item, ok := <-items:
 			if !ok {
-				if len(itemsDb) > 0 {
-					result <- u.Repo.Delete(ctx, itemsDb)
+				if len(itemsDB) > 0 {
+					result <- u.Repo.Delete(ctx, itemsDB)
 				}
 				return
 			}
-			itemsDb = append(itemsDb, item)
-			if len(itemsDb) >= 1 {
-				result <- u.Repo.Delete(ctx, itemsDb)
-				itemsDb = itemsDb[:0]
+			itemsDB = append(itemsDB, item)
+			if len(itemsDB) >= 1 {
+				result <- u.Repo.Delete(ctx, itemsDB)
+				itemsDB = itemsDB[:0]
 			}
 		}
 	}

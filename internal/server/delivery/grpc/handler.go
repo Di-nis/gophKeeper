@@ -15,6 +15,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+
+	"github.com/samborkent/uuidv7"
 )
 
 // Creater - интерфейс для создания данных в базе данных.
@@ -67,7 +69,7 @@ func (h *Handler) ListUserData(ctx context.Context, _ *emptypb.Empty) (*pb.UserD
 		texts []model.Text
 	)
 
-	userID := model.UserID("2345423rfsdvf")
+	userID := model.UserID(uuidv7.New())
 
 	creds, cards, bins, texts, err = h.usecase.GetAll(ctx, userID)
 	if err != nil {
@@ -91,7 +93,8 @@ func (h *Handler) ListUserData(ctx context.Context, _ *emptypb.Empty) (*pb.UserD
 func (h *Handler) AddCredentials(ctx context.Context, in *pb.AddCredentialsRequest) (*pb.AddCredentialsResponse, error) {
 	var response pb.AddCredentialsResponse
 
-	userID := model.UserID("2345423rfsdvf")
+	// userID := model.UserID("2345423rfsdvf")
+	userID := model.UserID(uuidv7.New())
 	// TODO: userID := ctx.Value(constants.UserIDKey).(string)
 
 	credPb := in.GetCredentials()
@@ -119,7 +122,8 @@ func (h *Handler) AddCredentials(ctx context.Context, in *pb.AddCredentialsReque
 func (h *Handler) GetCredentials(ctx context.Context, in *pb.GetCredentialsRequest) (*pb.GetCredentialsResponse, error) {
 	var response pb.GetCredentialsResponse
 
-	userID := model.UserID("2345423rfsdvf")
+	// userID := model.UserID("2345423rfsdvf")
+	userID := model.UserID(uuidv7.New())
 	// TODO: userID := ctx.Value(constants.UserIDKey).(string)
 
 	alias := in.GetAlias()

@@ -12,6 +12,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 	github.com/oklog/ulid/v2 v2.1.1
+	github.com/samborkent/uuidv7 v0.0.0-20231110121620-f2e19d87e48b
 	go.uber.org/zap v1.27.1
 	google.golang.org/grpc v1.74.2
 	google.golang.org/protobuf v1.36.11

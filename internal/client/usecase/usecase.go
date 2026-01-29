@@ -1,8 +1,14 @@
 package usecase
 
 import (
+	"context"
+	"errors"
+
 	"github.com/Di-nis/gophKeeper/internal/model"
 )
+
+// errMethodNotAllowed - ошибка, возникающая при попытке выполнить неизвестный метод.
+var errMethodNotAllowed = errors.New("error method not allowed")
 
 type ClientG interface {
 	AddCredentials(cred model.Credentials) error
@@ -11,8 +17,8 @@ type ClientG interface {
 }
 
 type ClientH interface {
-	// Register(model.Auth) error
-	// Login(model.Auth) error
+	Register(context.Context, model.Auth) error
+	Login(context.Context, model.Auth) error
 }
 
 type Usecase struct {
@@ -30,8 +36,20 @@ func New(clientG ClientG, clientH ClientH, command model.Command) *Usecase {
 }
 
 // Execute - метод для выполнения команд.
-func (u *Usecase) Execute() error {
+func (u *Usecase) Execute(ctx context.Context) error {
 	item := getItem(u.command)
+
+	a, ok := item.(model.Auth)
+	if ok {
+		switch u.command.Method {
+		case "register":
+			return u.ClientHTTP.Register(ctx, a)
+		case "login":
+			return u.ClientHTTP.Login(ctx, a)
+		default:
+			return errMethodNotAllowed
+		}
+	}
 
 	v, ok := item.(model.Credentials)
 	if ok {

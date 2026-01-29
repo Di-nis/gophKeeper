@@ -94,8 +94,8 @@ func (repo *Repo) InsertUser(ctx context.Context, user model.Auth) error {
 	repo.m.Lock()
 	defer repo.m.Unlock()
 	// TODO: доработать, пока ошибка
-	query := "INSERT INTO auth (id, login, password_hash) VALUES ($1, $2, $3)"
-	_, err := repo.db.ExecContext(ctx, query, user.ID, user.Login, user.PasswordHash)
+	query := "INSERT INTO auth (id, login, password_hash, role) VALUES ($1, $2, $3, $4)"
+	_, err := repo.db.ExecContext(ctx, query, user.GetID(), user.GetLogin(), user.GetPasswordHash(), user.GetRole())
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {

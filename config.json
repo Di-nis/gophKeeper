@@ -8,5 +8,6 @@
     "cert_file_path": "C:\\Users\\denis\\cert.pem",
     "key_file_path": "C:\\Users\\denis\\private.pem",
     "enable_https": false,
-    "shutdown_timeout": "10s"
+    "shutdown_timeout": "10s",
+    "token_storage": "token.txt"
 }

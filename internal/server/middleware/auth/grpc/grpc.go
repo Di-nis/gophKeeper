@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/Di-nis/gophKeeper/internal/server/middleware/auth"
+	"github.com/Di-nis/gophKeeper/internal/server/auth"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -33,12 +33,13 @@ func Interceptor(jwtSecret string) grpc.UnaryServerInterceptor {
 		}
 
 		if token == "" {
-			userID = auth.GenerateUserID()
-			sessionID = auth.GenerateSessionID()
-			token, err = auth.BuildJWTString(jwtSecret, userID, sessionID)
-			if err != nil {
-				return nil, status.Error(codes.Internal, "internal error")
-			}
+			return nil, status.Error(codes.Internal, "internal error")
+			// userID = auth.GenerateUserID()
+			// sessionID = auth.GenerateSessionID()
+			// token, err = auth.BuildJWT(jwtSecret, userID, sessionID)
+			// if err != nil {
+			// 	return nil, status.Error(codes.Internal, "internal error")
+			// }
 		} else {
 			claims, isTokenValid := auth.GetClaims(token, jwtSecret)
 			if !isTokenValid {

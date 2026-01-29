@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/Di-nis/gophKeeper/internal/server/middleware/auth"
+	"github.com/Di-nis/gophKeeper/internal/server/auth"
 
 	"net/http"
 
@@ -26,7 +26,7 @@ func AuthMiddleware(jwtSecret string) func(http.Handler) http.Handler {
 			if tokenString == "" {
 				userID = auth.GenerateUserID()
 				sessionID = auth.GenerateSessionID()
-				newToken, err := auth.BuildJWTString(jwtSecret, userID, sessionID)
+				newToken, err := auth.BuildJWT(jwtSecret, userID, sessionID)
 				if err != nil {
 					http.Error(res, "Ошибка создания токена", http.StatusInternalServerError)
 					return

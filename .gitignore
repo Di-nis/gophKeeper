@@ -33,3 +33,6 @@ go.work.sum
 
 # Makefile
 Makefile
+
+# token
+token.txt

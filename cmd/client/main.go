@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/Di-nis/gophKeeper/internal/client/config"
 	"github.com/Di-nis/gophKeeper/internal/client/usecase"
@@ -25,8 +27,11 @@ var (
 func main() {
 	fmt.Printf("Build version: %s\nBuild date: %s\nBuild commit: %s\n", buildVersion, buildDate, buildCommit)
 
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("failed to load env: %w", err)
+		log.Fatal("failed to load env:", err)
 	}
 
 	cfg := config.New()
@@ -34,20 +39,22 @@ func main() {
 
 	var err error
 	if err = logger.New(cfg.LogLevel); err != nil {
-		log.Fatal("logger initialization error: %w", err)
+		log.Fatal("logger initialization error:", err)
 	}
 
 	command := cli.Parser()
 
-
-	httpClient := hc.New(cfg.ServerAddressHTTP)
-	gRPCClient, err := gc.New(cfg.ServerAddressGRPC)
+	httpClient := hc.New(cfg.BaseURLHTTP, cfg.TokenStorage)
+	gRPCClient, err := gc.New(cfg.BaseURLGRPC)
 	if err != nil {
-		log.Fatal("gRPC client initialization error: %w", err)
+		log.Fatal("gRPC client initialization error:", err)
 	}
 
 	uc := usecase.New(gRPCClient, httpClient, *command)
 
-	uc.Execute()
+	err = uc.Execute(ctx)
+	if err != nil {
+		log.Fatal("request error:", err)
+	}
 
 }

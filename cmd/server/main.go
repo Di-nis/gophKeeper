@@ -34,21 +34,21 @@ func main() {
 	var err error
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("failed to load env: %w", err)
+		log.Fatal("failed to load env:", err)
 	}
 
 	cfg := config.New()
 	if err = cfg.Load(); err != nil {
-		log.Fatal("config error loading: %w", err)
+		log.Fatal("config error loading:", err)
 	}
 
 	if err := logger.New(cfg.LogLevel); err != nil {
-		log.Fatal("logger initialization error: %w", err)
+		log.Fatal("logger initialization error:", err)
 	}
 
 	repo, err := app.InitRepoPostgres(cfg)
 	if err != nil {
-		log.Fatal("repo initialization error: %w", err)
+		log.Fatal("repo initialization error:", err)
 	}
 
 	dataUc := dataUsecase.New(repo)
@@ -59,7 +59,7 @@ func main() {
 		logger.Sugar.Fatalf("internal/server/app/app.go, func Start(), failed to start grpc-server: %v", err)
 	}
 
-	userUc := userUsecase.New(repo)
+	userUc := userUsecase.New(repo, cfg)
 	pingUc, authUc := userUc, userUc
 
 	userHandler := httpHandler.New(pingUc, authUc, cfg)

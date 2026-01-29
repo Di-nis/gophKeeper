@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/samborkent/uuidv7"
 )
 
 // UserID - тип для UUID пользователя.
-type UserID string
+type UserID uuidv7.UUID
+
+// String - преобразование к строке.
+func (u UserID) String() string {
+	return uuidv7.UUID(u).String()
+}
 
 // Role — тип данных для роли пользователя.
 type Role string
@@ -28,12 +35,41 @@ type Auth struct {
 	UpdatedAt    time.Time `db:"updated_at"`
 }
 
-// // User - пользователь.
-// type User struct {
-// 	ID        UserID    `db:"id"`
-// 	CreatedAt time.Time `db:"created_at"`
-// 	UpdatedAt time.Time `db:"updated_at"`
-// }
+// GetID - возвращает ID пользователя.
+func (a *Auth) GetID() UserID {
+	return a.ID
+}
+
+// GetLogin - возвращает логин пользователя.
+func (a *Auth) GetLogin() string {
+	return a.Login
+}
+
+// GetPasswordHash - возвращает хэш пароля пользователя.
+func (a *Auth) GetPasswordHash() string {
+	return a.PasswordHash
+}
+
+// GetRole - возвращает роль пользователя.
+func (a *Auth) GetRole() Role {
+	return a.Role
+}
+
+// SetID - устанавливает ID пользователя.
+func (a *Auth) SetID(id uuidv7.UUID) *Auth {
+	a.ID = UserID(id)
+	return a
+}
+
+func (a *Auth) SetPasswordHash(passwordHash string) *Auth {
+	a.PasswordHash = passwordHash
+	return a
+}
+
+func (a *Auth) SetRole(role Role) *Auth {
+	a.Role = role
+	return a
+}
 
 // Credentials - учетные данные (логин/пароль).
 type Credentials struct {

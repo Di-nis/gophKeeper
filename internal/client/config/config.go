@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -12,10 +11,11 @@ import (
 
 // Config - структура конфигурации приложения.
 type Config struct {
-	ServerAddressHTTP string `env:"server_address_HTTP"`
-	ServerAddressGRPC string `env:"server_address_gRPC"`
-	LogLevel          string `env:"LOG_LEVEL"`
-	Config            string `env:"CONFIG"`
+	BaseURLHTTP  string `env:"BASE_URL_HTTP"`
+	BaseURLGRPC  string `env:"BASE_URL_GRPC"`
+	LogLevel     string `env:"LOG_LEVEL"`
+	Config       string `env:"CONFIG"`
+	TokenStorage string `env:"TOKEN_STORAGE"`
 }
 
 // New - функция для создания конфигурации.
@@ -33,9 +33,6 @@ func (c *Config) Load() error {
 		return err
 	}
 
-	// второй приоритет - из аргументов командной строки
-	// c.loanFromFlags()
-
 	// третий приоритет - из файла
 	err = c.loanFromFile()
 	if err != nil {
@@ -52,31 +49,6 @@ func (c *Config) loanFromEnv() error {
 	return nil
 }
 
-// loanFromFlags - загрузка конфигурации из аргументов командной строки.
-func (c *Config) loanFromFlags() {
-	var serverAddressHTTP, serverAddressGRPC, logLevel, config string
-
-	flag.StringVar(&serverAddressHTTP, "http", "", "gophKeeper http-server address")
-	flag.StringVar(&serverAddressGRPC, "grpc", "", "gophKeeper grpc-server address")
-	flag.StringVar(&logLevel, "l", "info", "log level")
-	flag.StringVar(&config, "config", "", "path to the configuration file")
-
-	flag.Parse()
-
-	if c.ServerAddressHTTP == "" {
-		c.ServerAddressHTTP = serverAddressHTTP
-	}
-	if c.ServerAddressGRPC == "" {
-		c.ServerAddressGRPC = serverAddressGRPC
-	}
-	if c.LogLevel == "" {
-		c.LogLevel = logLevel
-	}
-	if c.Config == "" {
-		c.Config = config
-	}
-}
-
 // loanFromFile - загрузка конфигурации из файла.
 func (c *Config) loanFromFile() error {
 	if c.Config == "" {
@@ -84,36 +56,40 @@ func (c *Config) loanFromFile() error {
 	}
 
 	type ConfigAlias struct {
-		ServerAddressHTTP string `json:"server_address_HTTP"`
-		ServerAddressGRPC string `json:"server_address_gRPC"`
-		LogLevel      string `json:"log_level"`
+		BaseURLHTTP  string `json:"BASE_URL_HTTP"`
+		BaseURLGRPC  string `json:"BASE_URL_GRPC"`
+		LogLevel     string `json:"log_level"`
+		TokenStorage string `json:"token_storage"`
 	}
 
 	var configAlias ConfigAlias
 
 	jsonFile, err := os.Open(c.Config)
 	if err != nil {
-		return fmt.Errorf("path: internal/server/config/config.go, func loanFromJSON(), failed to open json file: %w", err)
+		return fmt.Errorf("path: internal/client/config/config.go, func loanFromJSON(), failed to open json file: %w", err)
 	}
 
 	jsonFileData, err := io.ReadAll(jsonFile)
 	if err != nil {
-		return fmt.Errorf("path: internal/server/config/config.go, func loanFromJSON(), failed to read json file: %w", err)
+		return fmt.Errorf("path: internal/client/config/config.go, func loanFromJSON(), failed to read json file: %w", err)
 	}
 	defer jsonFile.Close()
 
 	if err := json.Unmarshal(jsonFileData, &configAlias); err != nil {
-		return fmt.Errorf("path: internal/server/config/config.go, func loanFromJSON(), failed to unmarshal data: %w", err)
+		return fmt.Errorf("path: internal/client/config/config.go, func loanFromJSON(), failed to unmarshal data: %w", err)
 	}
 
-	if c.ServerAddressHTTP == "" {
-		c.ServerAddressHTTP = configAlias.ServerAddressHTTP
+	if c.BaseURLHTTP == "" {
+		c.BaseURLHTTP = configAlias.BaseURLHTTP
 	}
-	if c.ServerAddressGRPC == "" {
-		c.ServerAddressGRPC = configAlias.ServerAddressGRPC
+	if c.BaseURLGRPC == "" {
+		c.BaseURLGRPC = configAlias.BaseURLGRPC
 	}
 	if c.LogLevel == "" {
 		c.LogLevel = configAlias.LogLevel
+	}
+	if c.TokenStorage == "" {
+		c.TokenStorage = configAlias.TokenStorage
 	}
 
 	return nil
