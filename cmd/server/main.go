@@ -1,3 +1,4 @@
+// Package main - точка входа в приложение GophKeeper.
 package main
 
 import (

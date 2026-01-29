@@ -10,6 +10,7 @@ import (
 	"github.com/Di-nis/gophKeeper/internal/model"
 )
 
+// Parser - парсер аргументов командной строки.
 func Parser() *model.Command {
 	var (
 		method, item, value string
@@ -52,6 +53,5 @@ func Parser() *model.Command {
 		Item:   item,
 		Value:  strings.Split(value, " "),
 	}
-	fmt.Printf("%v", command)
 	return command
 }

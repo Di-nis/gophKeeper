@@ -1,9 +1,11 @@
 package data
 
+// RawGetter - интерфейс получения raw значения.
 type RawGetter interface {
 	GetRaw() string
 }
 
+// AliasSetter - интерфейс установки алиаса.
 type AliasSetter interface {
 	SetAlias(string)
 }
@@ -18,6 +20,7 @@ func getRawValue(data any) (string, error) {
 	return raw, nil
 }
 
+// updateData - обновление данных.
 func updateData(data any, alias string) error {
 	v, ok := data.(AliasSetter)
 	if !ok {

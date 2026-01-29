@@ -1,3 +1,4 @@
+// Package http - реализация HTTP-клиента.
 package http
 
 import (

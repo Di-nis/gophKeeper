@@ -1,3 +1,4 @@
+// Package repository реализует работу с базой данных.
 package repository
 
 import (

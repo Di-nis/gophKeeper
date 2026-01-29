@@ -1,3 +1,4 @@
+// Package grpc - реализация api gRPC-клиента.
 package grpc
 
 import (

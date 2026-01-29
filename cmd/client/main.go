@@ -1,3 +1,4 @@
+// Package main - точка входа в реализацию клиента для сервиса GophKeeper.
 package main
 
 import (

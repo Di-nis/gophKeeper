@@ -1,3 +1,4 @@
+// Package config содержит параметры запуска клиента.
 package config
 
 import (
@@ -33,7 +34,7 @@ func (c *Config) Load() error {
 		return err
 	}
 
-	// третий приоритет - из файла
+	// второй приоритет - из файла
 	err = c.loanFromFile()
 	if err != nil {
 		return err

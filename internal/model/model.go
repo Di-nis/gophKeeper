@@ -20,7 +20,9 @@ func (u UserID) String() string {
 type Role string
 
 const (
-	RoleUser  Role = "user"
+	// RoleUser - роль "user"
+	RoleUser Role = "user"
+	// RoleAdmin - роль "admin"
 	RoleAdmin Role = "admin"
 )
 
@@ -61,11 +63,13 @@ func (a *Auth) SetID(id uuidv7.UUID) *Auth {
 	return a
 }
 
+// SetPasswordHash - устанавливает хэш пароля пользователя.
 func (a *Auth) SetPasswordHash(passwordHash string) *Auth {
 	a.PasswordHash = passwordHash
 	return a
 }
 
+// SetRole - устанавливает роль пользователя.
 func (a *Auth) SetRole(role Role) *Auth {
 	a.Role = role
 	return a
@@ -80,7 +84,10 @@ type Credentials struct {
 	Info     string `json:"info" db:"info"`
 }
 
-func (c *Credentials) GetRaw() string    { return c.Login + c.Password + c.Info }
+// GetRaw - возвращает сырые данные.
+func (c *Credentials) GetRaw() string { return c.Login + c.Password + c.Info }
+
+// SetAlias - устанавливает алиас.
 func (c *Credentials) SetAlias(a string) { c.Alias = a }
 
 // PaymentCard - данные банковской карты.
@@ -95,7 +102,10 @@ type PaymentCard struct {
 	Info     string `json:"info" db:"info"`
 }
 
-func (p *PaymentCard) GetRaw() string    { return p.Number }
+// GetRaw - возвращает сырые данные.
+func (p *PaymentCard) GetRaw() string { return p.Number }
+
+// SetAlias - устанавливает алиас.
 func (p *PaymentCard) SetAlias(a string) { p.Alias = a }
 
 // Binary - бинарные данные.
@@ -106,7 +116,10 @@ type Binary struct {
 	Info  string `json:"info" db:"info"`
 }
 
-func (b *Binary) GetRaw() string    { return string(b.Data) + b.Info }
+// GetRaw - возвращает сырые данные.
+func (b *Binary) GetRaw() string { return string(b.Data) + b.Info }
+
+// SetAlias - устанавливает алиас.
 func (b *Binary) SetAlias(a string) { b.Alias = a }
 
 // Text - произвольные текстовые данные.
@@ -117,7 +130,10 @@ type Text struct {
 	Info  string `json:"info" db:"info"`
 }
 
-func (t *Text) GetRaw() string    { return t.Data + t.Info }
+// GetRaw - возвращает сырые данные.
+func (t *Text) GetRaw() string { return t.Data + t.Info }
+
+// SetAlias - устанавливает алиас.
 func (t *Text) SetAlias(a string) { t.Alias = a }
 
 // Command - команда.

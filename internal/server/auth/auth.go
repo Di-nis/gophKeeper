@@ -13,25 +13,29 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-// ErrUserIDEmpty - ошибка, когда пользователь не найден.
 var (
-	ErrUserIDEmpty          = errors.New("user id is empty")
+	// ErrUserIDEmpty - user id is empty.
+	ErrUserIDEmpty = errors.New("user id is empty")
+	// ErrUnexpectedSighMethod - unexpected signing method.
 	ErrUnexpectedSighMethod = errors.New("unexpected signing method")
+)
+
+const (
+	// HeaderAuthorization - заголовок авторизации.
+	// TODO: кажется, это не нужно
+	HeaderAuthorization = "authorization"
+	// TokenExp - время жизни токена.
+	TokenExp = time.Hour * 3
+	// Key - ключ для создания токена.
+	Key contextKey = "userID"
 )
 
 type contextKey string
 
-const (
-	HeaderAuthorization            = "authorization"
-	TokenExp                       = time.Hour * 3
-	UserIDKey           contextKey = "userID"
-)
-
 // Claims — структура утверждений, которая включает стандартные утверждения и одно пользовательское UserID.
 type Claims struct {
 	jwt.RegisteredClaims
-	SID    string
-	UserID string
+	UserID model.UserID
 }
 
 // New - создание экземпляра Claims.
@@ -45,7 +49,7 @@ func (c *Claims) BuildJWT(secretKey string, userID model.UserID) (string, error)
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExp)),
 		},
-		UserID: userID.String(),
+		UserID: userID,
 	})
 
 	tokenOut, err := token.SignedString([]byte(secretKey))

@@ -9,6 +9,7 @@ import (
 	"github.com/Di-nis/gophKeeper/internal/server/middleware/logger"
 )
 
+// NewRouter - создание роутера.
 func NewRouter(handler *Handler) http.Handler {
 	r := chi.NewRouter()
 

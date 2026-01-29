@@ -1,3 +1,4 @@
+// Package cidr предоставляет middleware для проверки CIDR.
 package cidr
 
 import (

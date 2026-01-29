@@ -1,3 +1,4 @@
+// Package crypto - реализация сервиса по шифрованию данных.
 package crypto
 
 import (

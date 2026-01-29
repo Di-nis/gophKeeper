@@ -45,7 +45,7 @@ func New(pinger Pinger, auth Auth, config *config.Config) *Handler {
 	}
 }
 
-// ping - пинг БД.
+// Ping - пинг БД.
 func (h *Handler) Ping(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
 	defer cancel()

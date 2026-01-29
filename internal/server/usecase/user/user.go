@@ -1,3 +1,4 @@
+// Package user - реализация usecase для работы с пользователями.
 package user
 
 import (
@@ -29,6 +30,7 @@ var (
 	ErrBuildingToken = errors.New("error building token")
 )
 
+// Pinger - интерфейс для проверки соединения с базой данных.
 type Pinger interface {
 	Ping(context.Context) error
 }

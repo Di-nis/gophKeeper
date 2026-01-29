@@ -1,8 +1,10 @@
+// Package grpc реализует аутентификацию пользователя в gRPC сервере.
 package grpc
 
 import (
 	"context"
 
+	"github.com/Di-nis/gophKeeper/internal/model"
 	"github.com/Di-nis/gophKeeper/internal/server/auth"
 
 	"google.golang.org/grpc"
@@ -20,10 +22,12 @@ func Interceptor(jwtSecret string) grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
 		var (
-			token, userID, sessionID string
-			err                      error
+			userID model.UserID
+			token  string
+			err    error
 		)
 
+		// TODO: найти куки
 		mdReq, ok := metadata.FromIncomingContext(ctx)
 		if ok {
 			values := mdReq.Get(auth.HeaderAuthorization)
@@ -34,23 +38,13 @@ func Interceptor(jwtSecret string) grpc.UnaryServerInterceptor {
 
 		if token == "" {
 			return nil, status.Error(codes.Internal, "internal error")
-			// userID = auth.GenerateUserID()
-			// sessionID = auth.GenerateSessionID()
-			// token, err = auth.BuildJWT(jwtSecret, userID, sessionID)
-			// if err != nil {
-			// 	return nil, status.Error(codes.Internal, "internal error")
-			// }
-		} else {
-			claims, isTokenValid := auth.GetClaims(token, jwtSecret)
-			if !isTokenValid {
-				return nil, status.Error(codes.Unauthenticated, "token not valid")
-			}
-			userID = claims.UserID
-			sessionID = claims.SID
-			if sessionID == "" {
-				return nil, status.Error(codes.Unauthenticated, "sessionID not valid")
-			}
 		}
+
+		claims, isTokenValid := auth.GetClaims(token, jwtSecret)
+		if !isTokenValid {
+			return nil, status.Error(codes.Unauthenticated, "token not valid")
+		}
+		userID = claims.UserID
 
 		mdOut := metadata.Pairs(
 			auth.HeaderAuthorization, token,
@@ -61,7 +55,7 @@ func Interceptor(jwtSecret string) grpc.UnaryServerInterceptor {
 			return nil, status.Error(codes.Internal, "internal error")
 		}
 
-		ctx = context.WithValue(ctx, auth.UserIDKey, userID)
+		ctx = context.WithValue(ctx, auth.Key, userID)
 		return handler(ctx, req)
 	}
 }

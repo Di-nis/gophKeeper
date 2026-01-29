@@ -8,6 +8,7 @@ import (
 	"github.com/Di-nis/gophKeeper/pkg/logger"
 )
 
+// Server - HTTP-сервер.
 type Server struct {
 	httpSrv *http.Server
 	config  *config.Config

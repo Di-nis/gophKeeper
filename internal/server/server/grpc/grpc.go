@@ -1,3 +1,4 @@
+// package grpc - gRPC-сервер.
 package grpc
 
 import (
@@ -10,6 +11,7 @@ import (
 	"github.com/Di-nis/gophKeeper/internal/server/config"
 	handler "github.com/Di-nis/gophKeeper/internal/server/delivery/grpc"
 	auth "github.com/Di-nis/gophKeeper/internal/server/middleware/auth/grpc"
+	"github.com/Di-nis/gophKeeper/internal/server/middleware/compress"
 	"github.com/Di-nis/gophKeeper/pkg/logger"
 
 	"google.golang.org/grpc"
@@ -30,7 +32,8 @@ func New(config *config.Config, handler *handler.Handler) (*Server, error) {
 		os.Exit(1)
 	}
 
-	server := grpc.NewServer(grpc.UnaryInterceptor(auth.Interceptor(config.JWTSecret)))
+	// TODO: add compress
+	server := grpc.NewServer(grpc.UnaryInterceptor(auth.Interceptor(config.JWTSecret)), grpc.UnaryInterceptor(compress.Interceptor()))
 	pb.RegisterGophKeeperServiceServer(server, handler)
 
 	return &Server{

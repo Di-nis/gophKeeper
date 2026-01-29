@@ -7,30 +7,34 @@ import (
 	"github.com/Di-nis/gophKeeper/internal/model"
 )
 
-// errMethodNotAllowed - ошибка, возникающая при попытке выполнить неизвестный метод.
-var errMethodNotAllowed = errors.New("error method not allowed")
+// ErrMethodNotAllowed - ошибка, возникающая при попытке выполнить неизвестный метод.
+var ErrMethodNotAllowed = errors.New("error method not allowed")
 
+// Client - интерфейс для работы с клиентом.
 type ClientG interface {
 	AddCredentials(cred model.Credentials) error
 	GetCredentials(alias string) error
 	DelCredentials(alias []string) error
 }
 
+// ClientH - интерфейс для работы с клиентом.
 type ClientH interface {
 	Register(context.Context, model.Auth) error
 	Login(context.Context, model.Auth) error
 }
 
+// Usecase - структура Usecase.
 type Usecase struct {
-	ClientGRPC ClientG
-	ClientHTTP ClientH
+	clientGRPC ClientG
+	clientHTTP ClientH
 	command    model.Command
 }
 
+// New - создание структуры Usecase.
 func New(clientG ClientG, clientH ClientH, command model.Command) *Usecase {
 	return &Usecase{
-		ClientGRPC: clientG,
-		ClientHTTP: clientH,
+		clientGRPC: clientG,
+		clientHTTP: clientH,
 		command:    command,
 	}
 }
@@ -43,11 +47,11 @@ func (u *Usecase) Execute(ctx context.Context) error {
 	if ok {
 		switch u.command.Method {
 		case "register":
-			return u.ClientHTTP.Register(ctx, a)
+			return u.clientHTTP.Register(ctx, a)
 		case "login":
-			return u.ClientHTTP.Login(ctx, a)
+			return u.clientHTTP.Login(ctx, a)
 		default:
-			return errMethodNotAllowed
+			return ErrMethodNotAllowed
 		}
 	}
 
@@ -55,11 +59,11 @@ func (u *Usecase) Execute(ctx context.Context) error {
 	if ok {
 		switch u.command.Method {
 		case "add":
-			return u.ClientGRPC.AddCredentials(v)
+			return u.clientGRPC.AddCredentials(v)
 		case "get":
-			return u.ClientGRPC.GetCredentials(v.Alias)
+			return u.clientGRPC.GetCredentials(v.Alias)
 		case "del":
-			return u.ClientGRPC.DelCredentials([]string{v.Alias})
+			return u.clientGRPC.DelCredentials([]string{v.Alias})
 		}
 	}
 	return nil

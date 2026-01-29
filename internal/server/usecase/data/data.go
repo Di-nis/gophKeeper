@@ -1,3 +1,4 @@
+// Package data - реализация usecase для работы с данными.
 package data
 
 import (
@@ -29,6 +30,7 @@ var (
 	ErrDataUnsupportedType = errors.New("data unsupported type")
 )
 
+// Data - тип данных.
 type Data[T model.Credentials | model.PaymentCard | model.Binary | model.Text] []T
 
 // Pinger - интерфейс для проверки соединения с базой данных.

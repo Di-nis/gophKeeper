@@ -11,19 +11,23 @@ import (
 	"github.com/Di-nis/gophKeeper/internal/server/repository/postgres"
 )
 
+// Runner - интерфейс для запуска и остановки сервера.
 type Runner interface {
 	Start() error
 	Stop(ctx context.Context) error
 }
 
+// App - приложение.
 type App struct {
 	servers []Runner
 }
 
+// New - конструктор по созданию приложения.
 func New(servers ...Runner) *App {
 	return &App{servers: servers}
 }
 
+// Start - запуск приложения.
 func (a *App) Start() {
 	for _, s := range a.servers {
 		go func(s Runner) {
@@ -34,6 +38,7 @@ func (a *App) Start() {
 	}
 }
 
+// Stop - остановка приложения.
 func (a *App) Stop(ctx context.Context) {
 	for _, s := range a.servers {
 		if err := s.Stop(ctx); err != nil {
@@ -54,7 +59,6 @@ func InitRepoPostgres(config *config.Config) (*postgres.Repo, error) {
 		return nil, err
 	}
 
-	// выполнение миграций
 	err = repo.Migrations()
 	if err != nil {
 		return nil, err
