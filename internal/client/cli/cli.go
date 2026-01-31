@@ -6,31 +6,43 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/Di-nis/gophKeeper/internal/model"
 )
 
+// Cli - структура для хранения аргументов командной строки.
+type Cli struct {
+	Method string
+	Item   string
+	// TODO: сомнительно
+	Alias  string
+	Values []string
+}
+
+// New - конструктор.
+func New() Cli {
+	return Cli{}
+}
+
 // Parser - парсер аргументов командной строки.
-func Parser() *model.Command {
+func (с *Cli) Parser() {
 	var (
-		method, item, value string
-		command             *model.Command
+		method, item string
+		values       []string
 	)
 
 	flag.StringVar(&method, "method", "", "method request")
 	flag.StringVar(&item, "item", "", "item type")
-	flag.StringVar(&value, "value", "", "values")
+	flag.Func("values", "Comma-separated list of values", func(s string) error {
+		values = strings.Split(s, ",")
+		return nil
+	})
 
 	flag.Parse()
 
-	// Если аргументы CLI переданы, используем их
 	if method != "" && item != "" {
-		command = &model.Command{
-			Method: method,
-			Item:   item,
-			Value:  strings.Split(value, "_"),
-		}
-		return command
+		с.Method = method
+		с.Item = item
+		с.Values = values
+		return
 	}
 
 	// Иначе используем интерактивный ввод
@@ -44,14 +56,26 @@ func Parser() *model.Command {
 	item, _ = reader.ReadString('\n')
 	item = strings.TrimSpace(item)
 
-	fmt.Print("Введите значения через пробел: ")
+	fmt.Print("Введите значения через запятую без пробелов: ")
+	var value string
 	value, _ = reader.ReadString('\n')
 	value = strings.TrimSpace(value)
 
-	command = &model.Command{
-		Method: method,
-		Item:   item,
-		Value:  strings.Split(value, " "),
+	с.Method = method
+	с.Item = item
+	с.Values = strings.Split(value, ",")
+}
+
+// Print - вывод результатов запроса.
+func (c *Cli) Print() {
+	switch c.Method {
+	case MethodAdd:
+		fmt.Printf("alias %s - %s", c.Item, c.Alias)
+	case MethodGet:
+		fmt.Printf("%s: %s", c.Item, strings.Join(c.Values, ", "))
+	case MethodDelete:
+		fmt.Printf("данные %s удалены", c.Item)
+	case MethodSync:
+		fmt.Printf("данные %s синхронизированы", c.Item)
 	}
-	return command
 }

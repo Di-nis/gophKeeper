@@ -12,11 +12,13 @@ import (
 
 // Config - структура конфигурации приложения.
 type Config struct {
-	BaseURLHTTP  string `env:"BASE_URL_HTTP"`
-	BaseURLGRPC  string `env:"BASE_URL_GRPC"`
-	LogLevel     string `env:"LOG_LEVEL"`
-	Config       string `env:"CONFIG"`
-	TokenStorage string `env:"TOKEN_STORAGE"`
+	ServerAddressHTTP string `env:"SERVER_ADDRESS_HTTP"`
+	ServerAddressGRPC string `env:"SERVER_ADDRESS_GRPC"`
+	BaseURLHTTP       string `env:"BASE_URL_HTTP"`
+	BaseURLGRPC       string `env:"BASE_URL_GRPC"`
+	LogLevel          string `env:"LOG_LEVEL"`
+	Config            string `env:"CONFIG"`
+	TokenStorage      string `env:"TOKEN_STORAGE"`
 }
 
 // New - функция для создания конфигурации.
@@ -57,10 +59,12 @@ func (c *Config) loanFromFile() error {
 	}
 
 	type ConfigAlias struct {
-		BaseURLHTTP  string `json:"BASE_URL_HTTP"`
-		BaseURLGRPC  string `json:"BASE_URL_GRPC"`
-		LogLevel     string `json:"log_level"`
-		TokenStorage string `json:"token_storage"`
+		ServerAddressHTTP string `json:"SERVER_ADDRESS_HTTP"`
+		ServerAddressGRPC string `json:"SERVER_ADDRESS_GRPC"`
+		BaseURLHTTP       string `json:"BASE_URL_HTTP"`
+		BaseURLGRPC       string `json:"BASE_URL_GRPC"`
+		LogLevel          string `json:"log_level"`
+		TokenStorage      string `json:"token_storage"`
 	}
 
 	var configAlias ConfigAlias
@@ -80,6 +84,12 @@ func (c *Config) loanFromFile() error {
 		return fmt.Errorf("path: internal/client/config/config.go, func loanFromJSON(), failed to unmarshal data: %w", err)
 	}
 
+	if c.ServerAddressHTTP == "" {
+		c.ServerAddressHTTP = configAlias.ServerAddressHTTP
+	}
+	if c.ServerAddressGRPC == "" {
+		c.ServerAddressGRPC = configAlias.ServerAddressGRPC
+	}
 	if c.BaseURLHTTP == "" {
 		c.BaseURLHTTP = configAlias.BaseURLHTTP
 	}

@@ -223,7 +223,7 @@ func (repo *Repo) InsertBinary(ctx context.Context, bin *model.Binary) error {
 // InsertText - метод для вставки Text.
 func (repo *Repo) InsertText(ctx context.Context, text *model.Text) error {
 	query := `
-		INSERT INTO binary_data (user_id, data, alias, info)
+		INSERT INTO text_data (user_id, data, alias, info)
 		VALUES ($1, $2, $3, $4)
 	`
 

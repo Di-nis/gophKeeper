@@ -10,8 +10,8 @@ import (
 )
 
 // WriteToFile - функция записи в файл.
-func writeToFile(filename string, data string) error {
-	return os.WriteFile(filename, []byte(data), 0644)
+func writeToFile(path string, data string) error {
+	return os.WriteFile(path, []byte(data), 0644)
 }
 
 // ReadFromFile - функция чтения из файла.

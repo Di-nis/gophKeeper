@@ -20,7 +20,7 @@ var (
 	ErrNoData = errors.New("no data")
 
 	ErrUserAlreadyExists = errors.New("data already exist")
-	ErrUserNotFound = errors.New("user not found error")
+	ErrUserNotFound      = errors.New("user not found error")
 
 	ErrUnknownType = errors.New("unknown type")
 )

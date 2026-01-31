@@ -135,7 +135,7 @@ func (u *Usecase) GetAll(ctx context.Context, userID model.UserID) (
 	return creds, cards, bins, texts, nil
 }
 
-// Delete - 
+// Delete -
 func (u *Usecase) Delete(ctx context.Context, items any) error {
 	err := u.Repo.Delete(ctx, items)
 	if err != nil && errors.Is(err, repo.ErrNoData) {

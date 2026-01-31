@@ -89,7 +89,7 @@ func (h *Handler) ListUserData(ctx context.Context, _ *emptypb.Empty) (*pb.UserD
 	return &response, nil
 }
 
-// Credentials - создание данных типа "логин/пароль".
+// AddCredentials - создание данных типа "логин/пароль".
 func (h *Handler) AddCredentials(ctx context.Context, in *pb.AddCredentialsRequest) (*pb.AddCredentialsResponse, error) {
 	var response pb.AddCredentialsResponse
 
@@ -148,7 +148,6 @@ func (h *Handler) GetCredentials(ctx context.Context, in *pb.GetCredentialsReque
 }
 
 // DeleteCredentials - удаление данных типа "логин/пароль".
-// TODO: не работает
 func (h *Handler) DelCredentials(ctx context.Context, in *pb.DelCredentialsRequest) (*emptypb.Empty, error) {
 	var response emptypb.Empty
 
@@ -168,8 +167,8 @@ func (h *Handler) DelCredentials(ctx context.Context, in *pb.DelCredentialsReque
 	return &response, nil
 }
 
-// PaymentCard - создание данных типа "банковская карта".
-func (h *Handler) PaymentCard(ctx context.Context, in *pb.AddPaymentCardRequest) (*pb.AddPaymentCardResponse, error) {
+// AddPaymentCard - создание данных типа "банковская карта".
+func (h *Handler) AddPaymentCard(ctx context.Context, in *pb.AddPaymentCardRequest) (*pb.AddPaymentCardResponse, error) {
 	var response pb.AddPaymentCardResponse
 
 	userID := ctx.Value(auth.Key).(model.UserID)
@@ -252,8 +251,8 @@ func (h *Handler) DelPaymentCard(ctx context.Context, in *pb.DelPaymentCardReque
 	return &response, nil
 }
 
-// Binary - создание данных типа "бинарные данные".
-func (h *Handler) Binary(ctx context.Context, in *pb.AddBinaryRequest) (*pb.AddBinaryResponse, error) {
+// AddBinary - создание данных типа "бинарные данные".
+func (h *Handler) AddBinary(ctx context.Context, in *pb.AddBinaryRequest) (*pb.AddBinaryResponse, error) {
 	var response pb.AddBinaryResponse
 
 	userID := ctx.Value(auth.Key).(model.UserID)
@@ -309,7 +308,7 @@ func (h *Handler) GetBinary(ctx context.Context, in *pb.GetBinaryRequest) (*pb.G
 
 }
 
-// DeleteBinary - удаление данных типа "бинарные данные".
+// DelBinary - удаление данных типа "бинарные данные".
 func (h *Handler) DelBinary(ctx context.Context, in *pb.DelBinaryRequest) (*emptypb.Empty, error) {
 	var response emptypb.Empty
 
@@ -331,7 +330,7 @@ func (h *Handler) DelBinary(ctx context.Context, in *pb.DelBinaryRequest) (*empt
 }
 
 // Text - создание данных типа "текстовые данные".
-func (h *Handler) Text(ctx context.Context, in *pb.AddTextRequest) (*pb.AddTextResponse, error) {
+func (h *Handler) AddText(ctx context.Context, in *pb.AddTextRequest) (*pb.AddTextResponse, error) {
 	var response pb.AddTextResponse
 
 	userID := ctx.Value(auth.Key).(model.UserID)

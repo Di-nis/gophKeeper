@@ -1,8 +1,6 @@
 package model
 
 import (
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/samborkent/uuidv7"
@@ -135,22 +133,3 @@ func (t *Text) GetRaw() string { return t.Data + t.Info }
 
 // SetAlias - устанавливает алиас.
 func (t *Text) SetAlias(a string) { t.Alias = a }
-
-// Command - команда.
-type Command struct {
-	Method string
-	Item   string
-	Value  []string
-}
-
-// String должен уметь сериализовать переменную типа в строку.
-func (c *Command) String() string {
-	return fmt.Sprint(strings.Join(c.Value, ","))
-}
-
-// Set связывает переменную типа со значением флага
-// и устанавливает правила парсинга для пользовательского типа.
-func (c *Command) Set(flagValue string) error {
-	c.Value = strings.Split(flagValue, " ")
-	return nil
-}
