@@ -27,7 +27,6 @@ func Interceptor(jwtSecret string) grpc.UnaryServerInterceptor {
 			err    error
 		)
 
-		// TODO: найти куки
 		mdReq, ok := metadata.FromIncomingContext(ctx)
 		if ok {
 			values := mdReq.Get(auth.HeaderAuthorization)
@@ -37,7 +36,7 @@ func Interceptor(jwtSecret string) grpc.UnaryServerInterceptor {
 		}
 
 		if token == "" {
-			return nil, status.Error(codes.Internal, "internal error")
+			return nil, status.Error(codes.Unauthenticated, "authentificated error")
 		}
 
 		claims, isTokenValid := auth.GetClaims(token, jwtSecret)

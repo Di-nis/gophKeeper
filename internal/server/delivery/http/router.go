@@ -17,7 +17,6 @@ func NewRouter(handler *Handler) http.Handler {
 
 	r.Get("/ping", handler.Ping)
 	r.Post("/register", handler.Register)
-	r.Post("/login", handler.Login)
 
 	return r
 

@@ -25,8 +25,7 @@ type Pinger interface {
 
 // Auth - интерфейс для регистрации/авторизации.
 type Auth interface {
-	Register(context.Context, model.Auth) error
-	Login(context.Context, model.Auth) (string, error)
+	Register(context.Context, model.Auth) (string, error)
 }
 
 // Handler - структура HTTP-хендлера.
@@ -75,29 +74,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = h.Auth.Register(r.Context(), a); err != nil {
-		if errors.Is(err, user.ErrLoginAlreadyExist) {
-			w.WriteHeader(http.StatusConflict)
-		} else {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-		logger.Sugar.Errorf("cannot register user: %v", err)
-	}
-	w.WriteHeader(http.StatusOK)
-}
-
-// Login - аутентификация пользователя.
-func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	a := model.Auth{}
-
-	if err := readReq(r, &a); err != nil {
-		logger.Sugar.Errorf("cannot read request: %v", err)
-		w.WriteHeader(http.StatusBadRequest)
-
-		return
-	}
-
-	jwtToken, err := h.Auth.Login(r.Context(), a)
+	jwtToken, err := h.Auth.Register(r.Context(), a)
 	if err != nil {
 		if errors.Is(err, user.ErrUserNotFound) {
 			logger.Sugar.Errorf("user not found registered: %v", err)

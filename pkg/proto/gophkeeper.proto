@@ -43,7 +43,7 @@ message GetCredentialsResponse {
 }
 
 message DelCredentialsRequest {
-  repeated string alias = 1;
+  string alias = 1;
 }
 
 message AddPaymentCardRequest {
@@ -63,7 +63,7 @@ message GetPaymentCardResponse {
 }
 
 message DelPaymentCardRequest {
-  repeated string alias = 1;
+  string alias = 1;
 }
 
 message AddBinaryRequest {
@@ -83,7 +83,7 @@ message GetBinaryResponse {
 }
 
 message DelBinaryRequest {
-  repeated string alias = 1;
+  string alias = 1;
 }
 
 message AddTextRequest {
@@ -103,7 +103,7 @@ message GetTextResponse {
 }
 
 message DelTextRequest {
-  repeated string alias = 1;
+  string alias = 1;
 }
 
 message UserDataResponse {

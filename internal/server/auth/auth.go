@@ -22,10 +22,9 @@ var (
 
 const (
 	// HeaderAuthorization - заголовок авторизации.
-	// TODO: кажется, это не нужно
-	HeaderAuthorization = "authorization"
+	HeaderAuthorization = "Cookie"
 	// TokenExp - время жизни токена.
-	TokenExp = time.Hour * 3
+	TokenExp = time.Hour * 24
 	// Key - ключ для создания токена.
 	Key contextKey = "userID"
 )

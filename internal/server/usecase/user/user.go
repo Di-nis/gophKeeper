@@ -12,6 +12,7 @@ import (
 	"github.com/samborkent/uuidv7"
 
 	cfg "github.com/Di-nis/gophKeeper/internal/server/config"
+	"github.com/Di-nis/gophKeeper/internal/server/repository"
 )
 
 const (
@@ -48,14 +49,19 @@ type Inserter interface {
 // Exister - интерфейс для проверки пользователя.
 type Exister interface {
 	ExistLogin(context.Context, string) (bool, error)
-	ExistHashPassword(context.Context, string) (bool, error)
 }
+
+// Getter - интерфейс для получения пользователя.
+// type Getter interface {
+// 	SelectUserID(context.Context, *model.Auth) error
+// }
 
 // Repository - интерфейс для базы данных.
 type Repository interface {
 	Pinger
 	Inserter
 	Exister
+	// Getter
 	Close() error
 }
 
@@ -87,46 +93,27 @@ func (u *Usecase) Ping(ctx context.Context) error {
 	return u.repo.Ping(ctx)
 }
 
-// Register - регистрация пользователя.
-func (u *Usecase) Register(ctx context.Context, auth model.Auth) error {
-	exists, err := u.repo.ExistLogin(ctx, auth.GetLogin())
+// Register - регистрация/аутентификация пользователя.
+func (u *Usecase) Register(ctx context.Context, auth model.Auth) (string, error) {
+	var exists bool
+	exists, err := u.repo.ExistLogin(ctx, auth.Login)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if exists {
-		return ErrLoginAlreadyExist
+		return "", ErrLoginAlreadyExist
 	}
+
 	uuid := uuidv7.New()
 	hash := u.crypto.Create(auth.Password, passwordHashLength)
 
 	auth.SetID(uuid).SetPasswordHash(hash).SetRole(model.RoleUser)
 
 	if err := u.repo.InsertUser(ctx, auth); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Login - аутентификация пользователя.
-func (u *Usecase) Login(ctx context.Context, auth model.Auth) (string, error) {
-	var exists bool
-	exists, err := u.repo.ExistLogin(ctx, auth.Login)
-	if err != nil {
+		if errors.Is(err, repository.ErrUserAlreadyExists) {
+			return "", ErrLoginAlreadyExist
+		}
 		return "", err
-	}
-	if !exists {
-		return "", ErrUserNotFound
-	}
-
-	auth.PasswordHash = u.crypto.Create(auth.Password, passwordHashLength)
-
-	exists, err = u.repo.ExistHashPassword(ctx, auth.PasswordHash)
-	if err != nil {
-		return "", err
-	}
-	if !exists {
-		return "", ErrUserAlreadyExist
 	}
 
 	token, err := u.auth.BuildJWT(u.config.JWTSecret, auth.GetID())

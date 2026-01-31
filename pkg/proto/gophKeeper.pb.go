@@ -7,12 +7,11 @@
 package proto
 
 import (
-	reflect "reflect"
-	unsafe "unsafe"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	reflect "reflect"
+	unsafe "unsafe"
 )
 
 const (
@@ -315,10 +314,12 @@ func (b0 GetCredentialsResponse_builder) Build() *GetCredentialsResponse {
 }
 
 type DelCredentialsRequest struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Alias []string               `protobuf:"bytes,1,rep,name=alias"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *DelCredentialsRequest) Reset() {
@@ -346,28 +347,47 @@ func (x *DelCredentialsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DelCredentialsRequest) GetAlias() []string {
+func (x *DelCredentialsRequest) GetAlias() string {
 	if x != nil {
-		return x.xxx_hidden_Alias
+		if x.xxx_hidden_Alias != nil {
+			return *x.xxx_hidden_Alias
+		}
+		return ""
 	}
-	return nil
+	return ""
 }
 
-func (x *DelCredentialsRequest) SetAlias(v []string) {
-	x.xxx_hidden_Alias = v
+func (x *DelCredentialsRequest) SetAlias(v string) {
+	x.xxx_hidden_Alias = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+}
+
+func (x *DelCredentialsRequest) HasAlias() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *DelCredentialsRequest) ClearAlias() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Alias = nil
 }
 
 type DelCredentialsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Alias []string
+	Alias *string
 }
 
 func (b0 DelCredentialsRequest_builder) Build() *DelCredentialsRequest {
 	m0 := &DelCredentialsRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Alias = b.Alias
+	if b.Alias != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Alias = b.Alias
+	}
 	return m0
 }
 
@@ -664,10 +684,12 @@ func (b0 GetPaymentCardResponse_builder) Build() *GetPaymentCardResponse {
 }
 
 type DelPaymentCardRequest struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Alias []string               `protobuf:"bytes,1,rep,name=alias"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *DelPaymentCardRequest) Reset() {
@@ -695,28 +717,47 @@ func (x *DelPaymentCardRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DelPaymentCardRequest) GetAlias() []string {
+func (x *DelPaymentCardRequest) GetAlias() string {
 	if x != nil {
-		return x.xxx_hidden_Alias
+		if x.xxx_hidden_Alias != nil {
+			return *x.xxx_hidden_Alias
+		}
+		return ""
 	}
-	return nil
+	return ""
 }
 
-func (x *DelPaymentCardRequest) SetAlias(v []string) {
-	x.xxx_hidden_Alias = v
+func (x *DelPaymentCardRequest) SetAlias(v string) {
+	x.xxx_hidden_Alias = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+}
+
+func (x *DelPaymentCardRequest) HasAlias() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *DelPaymentCardRequest) ClearAlias() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Alias = nil
 }
 
 type DelPaymentCardRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Alias []string
+	Alias *string
 }
 
 func (b0 DelPaymentCardRequest_builder) Build() *DelPaymentCardRequest {
 	m0 := &DelPaymentCardRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Alias = b.Alias
+	if b.Alias != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Alias = b.Alias
+	}
 	return m0
 }
 
@@ -1013,10 +1054,12 @@ func (b0 GetBinaryResponse_builder) Build() *GetBinaryResponse {
 }
 
 type DelBinaryRequest struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Alias []string               `protobuf:"bytes,1,rep,name=alias"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *DelBinaryRequest) Reset() {
@@ -1044,28 +1087,47 @@ func (x *DelBinaryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DelBinaryRequest) GetAlias() []string {
+func (x *DelBinaryRequest) GetAlias() string {
 	if x != nil {
-		return x.xxx_hidden_Alias
+		if x.xxx_hidden_Alias != nil {
+			return *x.xxx_hidden_Alias
+		}
+		return ""
 	}
-	return nil
+	return ""
 }
 
-func (x *DelBinaryRequest) SetAlias(v []string) {
-	x.xxx_hidden_Alias = v
+func (x *DelBinaryRequest) SetAlias(v string) {
+	x.xxx_hidden_Alias = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+}
+
+func (x *DelBinaryRequest) HasAlias() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *DelBinaryRequest) ClearAlias() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Alias = nil
 }
 
 type DelBinaryRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Alias []string
+	Alias *string
 }
 
 func (b0 DelBinaryRequest_builder) Build() *DelBinaryRequest {
 	m0 := &DelBinaryRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Alias = b.Alias
+	if b.Alias != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Alias = b.Alias
+	}
 	return m0
 }
 
@@ -1362,10 +1424,12 @@ func (b0 GetTextResponse_builder) Build() *GetTextResponse {
 }
 
 type DelTextRequest struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Alias []string               `protobuf:"bytes,1,rep,name=alias"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Alias       *string                `protobuf:"bytes,1,opt,name=alias"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *DelTextRequest) Reset() {
@@ -1393,28 +1457,47 @@ func (x *DelTextRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DelTextRequest) GetAlias() []string {
+func (x *DelTextRequest) GetAlias() string {
 	if x != nil {
-		return x.xxx_hidden_Alias
+		if x.xxx_hidden_Alias != nil {
+			return *x.xxx_hidden_Alias
+		}
+		return ""
 	}
-	return nil
+	return ""
 }
 
-func (x *DelTextRequest) SetAlias(v []string) {
-	x.xxx_hidden_Alias = v
+func (x *DelTextRequest) SetAlias(v string) {
+	x.xxx_hidden_Alias = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+}
+
+func (x *DelTextRequest) HasAlias() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *DelTextRequest) ClearAlias() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Alias = nil
 }
 
 type DelTextRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Alias []string
+	Alias *string
 }
 
 func (b0 DelTextRequest_builder) Build() *DelTextRequest {
 	m0 := &DelTextRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Alias = b.Alias
+	if b.Alias != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Alias = b.Alias
+	}
 	return m0
 }
 
@@ -2274,7 +2357,7 @@ const file_pkg_proto_gophkeeper_proto_rawDesc = "" +
 	"\x16GetCredentialsResponse\x124\n" +
 	"\vcredentials\x18\x01 \x01(\v2\x12.proto.CredentialsR\vcredentials\"-\n" +
 	"\x15DelCredentialsRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x03(\tR\x05alias\"?\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"?\n" +
 	"\x15AddPaymentCardRequest\x12&\n" +
 	"\x04card\x18\x01 \x01(\v2\x12.proto.PaymentCardR\x04card\".\n" +
 	"\x16AddPaymentCardResponse\x12\x14\n" +
@@ -2284,7 +2367,7 @@ const file_pkg_proto_gophkeeper_proto_rawDesc = "" +
 	"\x16GetPaymentCardResponse\x12&\n" +
 	"\x04card\x18\x01 \x01(\v2\x12.proto.PaymentCardR\x04card\"-\n" +
 	"\x15DelPaymentCardRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x03(\tR\x05alias\"3\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"3\n" +
 	"\x10AddBinaryRequest\x12\x1f\n" +
 	"\x03bin\x18\x01 \x01(\v2\r.proto.BinaryR\x03bin\")\n" +
 	"\x11AddBinaryResponse\x12\x14\n" +
@@ -2294,7 +2377,7 @@ const file_pkg_proto_gophkeeper_proto_rawDesc = "" +
 	"\x11GetBinaryResponse\x12\x1f\n" +
 	"\x03bin\x18\x01 \x01(\v2\r.proto.BinaryR\x03bin\"(\n" +
 	"\x10DelBinaryRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x03(\tR\x05alias\"1\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"1\n" +
 	"\x0eAddTextRequest\x12\x1f\n" +
 	"\x04text\x18\x01 \x01(\v2\v.proto.TextR\x04text\"'\n" +
 	"\x0fAddTextResponse\x12\x14\n" +
@@ -2304,7 +2387,7 @@ const file_pkg_proto_gophkeeper_proto_rawDesc = "" +
 	"\x0fGetTextResponse\x12\x1f\n" +
 	"\x04text\x18\x01 \x01(\v2\v.proto.TextR\x04text\"&\n" +
 	"\x0eDelTextRequest\x12\x14\n" +
-	"\x05alias\x18\x01 \x03(\tR\x05alias\"\xc6\x01\n" +
+	"\x05alias\x18\x01 \x01(\tR\x05alias\"\xc6\x01\n" +
 	"\x10UserDataResponse\x124\n" +
 	"\vcredentials\x18\x01 \x03(\v2\x12.proto.CredentialsR\vcredentials\x124\n" +
 	"\vpaymentCard\x18\x02 \x03(\v2\x12.proto.PaymentCardR\vpaymentCard\x12%\n" +
