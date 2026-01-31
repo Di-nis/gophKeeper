@@ -23,7 +23,7 @@ func New() Cli {
 }
 
 // Parser - парсер аргументов командной строки.
-func (с *Cli) Parser() {
+func (c *Cli) Parser() {
 	var (
 		method, item string
 		values       []string
@@ -39,20 +39,20 @@ func (с *Cli) Parser() {
 	flag.Parse()
 
 	if method != "" && item != "" {
-		с.Method = method
-		с.Item = item
-		с.Values = values
+		c.Method = method
+		c.Item = item
+		c.Values = values
 		return
 	}
 
 	// Иначе используем интерактивный ввод
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("Введите метод отправки: ")
+	fmt.Printf("Введите на выбор метод отправки, %s, %s, %s или %s: ", MethodAdd, MethodGet, MethodDelete, MethodSync)
 	method, _ = reader.ReadString('\n')
 	method = strings.TrimSpace(method)
 
-	fmt.Print("Введите тип данных: ")
+	fmt.Printf("Введите тип данных, %s, %s, %s или %s: ", ItemCredentials, ItemPaymentCard, ItemBinary, ItemText)
 	item, _ = reader.ReadString('\n')
 	item = strings.TrimSpace(item)
 
@@ -61,16 +61,16 @@ func (с *Cli) Parser() {
 	value, _ = reader.ReadString('\n')
 	value = strings.TrimSpace(value)
 
-	с.Method = method
-	с.Item = item
-	с.Values = strings.Split(value, ",")
+	c.Method = method
+	c.Item = item
+	c.Values = strings.Split(value, ",")
 }
 
 // Print - вывод результатов запроса.
 func (c *Cli) Print() {
 	switch c.Method {
 	case MethodAdd:
-		fmt.Printf("alias %s - %s", c.Item, c.Alias)
+		fmt.Printf("данные сохранены, хэш %s - %s", c.Item, c.Alias)
 	case MethodGet:
 		fmt.Printf("%s: %s", c.Item, strings.Join(c.Values, ", "))
 	case MethodDelete:

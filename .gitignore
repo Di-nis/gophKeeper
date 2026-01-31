@@ -32,7 +32,7 @@ go.work.sum
 .vscode/
 
 # Makefile
-Makefile
+# Makefile
 
 # token
 token.txt

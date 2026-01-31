@@ -21,19 +21,19 @@ import (
 )
 
 var (
-	buildVersion = "N/A"
-	buildDate    = "N/A"
-	buildCommit  = "N/A"
+	BuildVersion = "N/A"
+	BuildTime    = "N/A"
+	BuildCommit  = "N/A"
 )
 
 func main() {
-	fmt.Printf("Build version: %s\nBuild date: %s\nBuild commit: %s\n", buildVersion, buildDate, buildCommit)
+	fmt.Printf("Build version: %s\nBuild date: %s\nBuild commit: %s\n", BuildVersion, BuildTime, BuildCommit)
 
 	// ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	// defer cancel()
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("failed to load env:", err)
+		log.Printf("failed to load env: %v", err)
 	}
 
 	cfg := config.New()
