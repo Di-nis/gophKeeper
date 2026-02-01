@@ -11,8 +11,8 @@ CREATE TABLE payment_card (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL,
     number VARCHAR(255) NOT NULL,
-    exp_month SMALLINT NOT NULL,
-    exp_year SMALLINT NOT NULL,
+    exp_month VARCHAR(255) NOT NULL,
+    exp_year VARCHAR(255) NOT NULL,
     cvv SMALLINT,
     alias VARCHAR(255) UNIQUE,
     info TEXT

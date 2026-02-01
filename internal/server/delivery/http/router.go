@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/Di-nis/gophKeeper/internal/server/middleware/compress"
-	"github.com/Di-nis/gophKeeper/internal/server/middleware/logger"
+	logger "github.com/Di-nis/gophKeeper/internal/server/middleware/logger/http"
 )
 
 // NewRouter - создание роутера.
@@ -17,6 +17,7 @@ func NewRouter(handler *Handler) http.Handler {
 
 	r.Get("/ping", handler.Ping)
 	r.Post("/register", handler.Register)
+	r.Post("/login", handler.Login)
 
 	return r
 

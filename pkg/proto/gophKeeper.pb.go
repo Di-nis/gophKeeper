@@ -7,12 +7,11 @@
 package proto
 
 import (
-	reflect "reflect"
-	unsafe "unsafe"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	reflect "reflect"
+	unsafe "unsafe"
 )
 
 const (
@@ -1789,8 +1788,8 @@ func (b0 Credentials_builder) Build() *Credentials {
 type PaymentCard struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Number      *string                `protobuf:"bytes,1,opt,name=number"`
-	xxx_hidden_ExpMonth    int32                  `protobuf:"zigzag32,2,opt,name=expMonth"`
-	xxx_hidden_ExpYear     int32                  `protobuf:"zigzag32,3,opt,name=expYear"`
+	xxx_hidden_ExpMonth    *string                `protobuf:"bytes,2,opt,name=expMonth"`
+	xxx_hidden_ExpYear     *string                `protobuf:"bytes,3,opt,name=expYear"`
 	xxx_hidden_Cvv         *string                `protobuf:"bytes,4,opt,name=cvv"`
 	xxx_hidden_Holder      *string                `protobuf:"bytes,5,opt,name=holder"`
 	xxx_hidden_Alias       *string                `protobuf:"bytes,6,opt,name=alias"`
@@ -1836,18 +1835,24 @@ func (x *PaymentCard) GetNumber() string {
 	return ""
 }
 
-func (x *PaymentCard) GetExpMonth() int32 {
+func (x *PaymentCard) GetExpMonth() string {
 	if x != nil {
-		return x.xxx_hidden_ExpMonth
+		if x.xxx_hidden_ExpMonth != nil {
+			return *x.xxx_hidden_ExpMonth
+		}
+		return ""
 	}
-	return 0
+	return ""
 }
 
-func (x *PaymentCard) GetExpYear() int32 {
+func (x *PaymentCard) GetExpYear() string {
 	if x != nil {
-		return x.xxx_hidden_ExpYear
+		if x.xxx_hidden_ExpYear != nil {
+			return *x.xxx_hidden_ExpYear
+		}
+		return ""
 	}
-	return 0
+	return ""
 }
 
 func (x *PaymentCard) GetCvv() string {
@@ -1895,13 +1900,13 @@ func (x *PaymentCard) SetNumber(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 7)
 }
 
-func (x *PaymentCard) SetExpMonth(v int32) {
-	x.xxx_hidden_ExpMonth = v
+func (x *PaymentCard) SetExpMonth(v string) {
+	x.xxx_hidden_ExpMonth = &v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 7)
 }
 
-func (x *PaymentCard) SetExpYear(v int32) {
-	x.xxx_hidden_ExpYear = v
+func (x *PaymentCard) SetExpYear(v string) {
+	x.xxx_hidden_ExpYear = &v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 7)
 }
 
@@ -1981,12 +1986,12 @@ func (x *PaymentCard) ClearNumber() {
 
 func (x *PaymentCard) ClearExpMonth() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_ExpMonth = 0
+	x.xxx_hidden_ExpMonth = nil
 }
 
 func (x *PaymentCard) ClearExpYear() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_ExpYear = 0
+	x.xxx_hidden_ExpYear = nil
 }
 
 func (x *PaymentCard) ClearCvv() {
@@ -2013,8 +2018,8 @@ type PaymentCard_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Number   *string
-	ExpMonth *int32
-	ExpYear  *int32
+	ExpMonth *string
+	ExpYear  *string
 	Cvv      *string
 	Holder   *string
 	Alias    *string
@@ -2031,11 +2036,11 @@ func (b0 PaymentCard_builder) Build() *PaymentCard {
 	}
 	if b.ExpMonth != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 7)
-		x.xxx_hidden_ExpMonth = *b.ExpMonth
+		x.xxx_hidden_ExpMonth = b.ExpMonth
 	}
 	if b.ExpYear != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 7)
-		x.xxx_hidden_ExpYear = *b.ExpYear
+		x.xxx_hidden_ExpYear = b.ExpYear
 	}
 	if b.Cvv != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
@@ -2401,8 +2406,8 @@ const file_pkg_proto_gophkeeper_proto_rawDesc = "" +
 	"\x04info\x18\x04 \x01(\tR\x04info\"\xaf\x01\n" +
 	"\vPaymentCard\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\tR\x06number\x12\x1a\n" +
-	"\bexpMonth\x18\x02 \x01(\x11R\bexpMonth\x12\x18\n" +
-	"\aexpYear\x18\x03 \x01(\x11R\aexpYear\x12\x10\n" +
+	"\bexpMonth\x18\x02 \x01(\tR\bexpMonth\x12\x18\n" +
+	"\aexpYear\x18\x03 \x01(\tR\aexpYear\x12\x10\n" +
 	"\x03cvv\x18\x04 \x01(\tR\x03cvv\x12\x16\n" +
 	"\x06holder\x18\x05 \x01(\tR\x06holder\x12\x14\n" +
 	"\x05alias\x18\x06 \x01(\tR\x05alias\x12\x12\n" +

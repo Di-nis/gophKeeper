@@ -4,6 +4,7 @@ package http
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/Di-nis/gophKeeper/internal/model"
@@ -13,6 +14,7 @@ import (
 var (
 	errWtiteFile            = errors.New("error write to file")
 	errEmptyLoginOrPassword = errors.New("empty login or password")
+	errEmptyCookie          = errors.New("empty cookie")
 )
 
 // attemptsCount - максимальное количество попыток при запросах на удаленный сервер.
@@ -69,7 +71,7 @@ func (c *Client) Register(ctx context.Context, auth model.Auth) error {
 			return err
 		}
 
-		req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.serverAddress+c.urlPath.login, body)
+		req, err := http.NewRequest(http.MethodPost, c.serverAddress+c.urlPath.register, body)
 		if err != nil {
 			return err
 		}
@@ -91,7 +93,7 @@ func (c *Client) Register(ctx context.Context, auth model.Auth) error {
 
 	if lastResErr != nil {
 		logger.Sugar.Warnw(
-			"path: internal/client/api/http/http.go, func Login(), error request",
+			"path: internal/client/api/http/http.go, func Register(), error request",
 			"attempt", attemptsCount,
 			"err", lastResErr,
 		)
@@ -116,6 +118,10 @@ func (c *Client) Login(ctx context.Context, auth model.Auth) error {
 		body, err := createBody(auth)
 		if err != nil {
 			return err
+		}
+
+		if ctx.Err() != nil {
+			fmt.Println("ctx already canceled:", ctx.Err())
 		}
 
 		req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.serverAddress+c.urlPath.login, body)
@@ -151,6 +157,7 @@ func (c *Client) Login(ctx context.Context, auth model.Auth) error {
 	cookie := resp.Cookies()
 	if len(cookie) == 0 {
 		logger.Sugar.Warnw("path: internal/client/api/http/http.go, func Login(), cookie is empty")
+		return errEmptyCookie
 	}
 
 	token = cookie[0].Value

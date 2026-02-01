@@ -9,5 +9,6 @@
     "key_file_path": "C:\\Users\\denis\\private.pem",
     "enable_https": false,
     "shutdown_timeout": "10s",
-    "token_storage": "token.txt"
+    "token_storage": "token.txt",
+    "database_path": "client.db"
 }

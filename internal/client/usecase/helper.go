@@ -1,33 +1,33 @@
 package usecase
 
 import (
-	"strconv"
-
-	"github.com/Di-nis/gophKeeper/internal/client/cli"
+	// in "github.com/Di-nis/gophKeeper/internal/client/cli/input"
 	"github.com/Di-nis/gophKeeper/internal/model"
 )
 
-func getItemAdd(c cli.Cli) (any, error) {
-	switch c.Item {
-	case "credentials":
-		cred := model.Credentials{
-			Login:    c.Values[0],
-			Password: c.Values[1],
-		}
-		return cred, nil
-	default:
-		return nil, ErrMethodNotAllowed
-	}
-}
+// //
+// func getItemAdd(c in.Input) (any, error) {
+// 	switch c.Item {
+// 	case "credentials":
+// 		cred := model.Credentials{
+// 			Login:    c.Values[0],
+// 			Password: c.Values[1],
+// 		}
+// 		return cred, nil
+// 	default:
+// 		return nil, ErrMethodNotAllowed
+// 	}
+// }
 
 // getCredentials - формирование экземпляра Credentials.
 func getCredentials(values []string) (model.Credentials, error) {
-	if len(values) != 2 {
+	if len(values) != 3 {
 		return model.Credentials{}, ErrConvertion
 	}
 	return model.Credentials{
 		Login:    values[0],
 		Password: values[1],
+		Info:     values[2],
 	}, nil
 }
 
@@ -37,19 +37,10 @@ func getPaymentCard(values []string) (model.PaymentCard, error) {
 		return model.PaymentCard{}, ErrConvertion
 	}
 
-	expMonth, err := strconv.ParseInt(values[1], 10, 32)
-	if err != nil {
-		return model.PaymentCard{}, ErrConvertion
-	}
-	expYear, err := strconv.ParseInt(values[2], 10, 32)
-	if err != nil {
-		return model.PaymentCard{}, ErrConvertion
-	}
-
 	return model.PaymentCard{
 		Number:   values[0],
-		ExpMonth: int32(expMonth),
-		ExpYear:  int32(expYear),
+		ExpMonth: values[1],
+		ExpYear:  values[2],
 		CVV:      values[3],
 		Holder:   values[4],
 		Info:     values[5],

@@ -15,8 +15,6 @@ import (
 const (
 	// aliasLength - длина алиаса.
 	aliasLength = 16
-	// numWorkers - количество воркеров.
-	numWorkers = 3
 )
 
 var (

@@ -61,6 +61,18 @@ func (a *Auth) SetID(id uuidv7.UUID) *Auth {
 	return a
 }
 
+// SetLogin - устанавливает логин пользователя.
+func (a *Auth) SetLogin(login string) *Auth {
+	a.Login = login
+	return a
+}
+
+// SetPasswordHash - устанавливает хэш пароля пользователя.
+func (a *Auth) SetPassword(password string) *Auth {
+	a.Password = password
+	return a
+}
+
 // SetPasswordHash - устанавливает хэш пароля пользователя.
 func (a *Auth) SetPasswordHash(passwordHash string) *Auth {
 	a.PasswordHash = passwordHash
@@ -72,6 +84,7 @@ func (a *Auth) SetRole(role Role) *Auth {
 	a.Role = role
 	return a
 }
+
 
 // Credentials - учетные данные (логин/пароль).
 type Credentials struct {
@@ -92,8 +105,8 @@ func (c *Credentials) SetAlias(a string) { c.Alias = a }
 type PaymentCard struct {
 	UUID     UserID `json:"-" db:"user_id"`
 	Number   string `json:"number" db:"number"`
-	ExpMonth int32  `json:"exp_month" db:"exp_month"`
-	ExpYear  int32  `json:"exp_year" db:"exp_year"`
+	ExpMonth string  `json:"exp_month" db:"exp_month"`
+	ExpYear  string  `json:"exp_year" db:"exp_year"`
 	CVV      string `json:"cvv" db:"cvv"`
 	Holder   string `json:"holder" db:"holder"`
 	Alias    string `json:"alias" db:"alias"`

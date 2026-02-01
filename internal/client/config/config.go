@@ -19,6 +19,7 @@ type Config struct {
 	LogLevel          string `env:"LOG_LEVEL"`
 	Config            string `env:"CONFIG"`
 	TokenStorage      string `env:"TOKEN_STORAGE"`
+	DatabasePath      string `env:"DATABASE_PATH"`
 }
 
 // New - функция для создания конфигурации.
@@ -65,6 +66,7 @@ func (c *Config) loanFromFile() error {
 		BaseURLGRPC       string `json:"BASE_URL_GRPC"`
 		LogLevel          string `json:"log_level"`
 		TokenStorage      string `json:"token_storage"`
+		DatabasePath      string `json:"database_path"`
 	}
 
 	var configAlias ConfigAlias
@@ -101,6 +103,9 @@ func (c *Config) loanFromFile() error {
 	}
 	if c.TokenStorage == "" {
 		c.TokenStorage = configAlias.TokenStorage
+	}
+	if c.DatabasePath == "" {
+		c.DatabasePath = configAlias.DatabasePath
 	}
 
 	return nil

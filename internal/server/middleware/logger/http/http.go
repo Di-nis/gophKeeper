@@ -1,5 +1,5 @@
-// Package logger предоставляет абстракцию для логирования.
-package logger
+// Package http предоставляет абстракцию для логирования.
+package http
 
 import (
 	"net/http"

@@ -8,7 +8,6 @@ import (
 	"github.com/Di-nis/gophKeeper/internal/model"
 	"github.com/Di-nis/gophKeeper/internal/server/auth"
 	crpt "github.com/Di-nis/gophKeeper/internal/server/crypto"
-
 	"github.com/samborkent/uuidv7"
 
 	cfg "github.com/Di-nis/gophKeeper/internal/server/config"
@@ -49,19 +48,20 @@ type Inserter interface {
 // Exister - интерфейс для проверки пользователя.
 type Exister interface {
 	ExistLogin(context.Context, string) (bool, error)
+	ExistHashPassword(context.Context, string) (bool, error)
 }
 
 // Getter - интерфейс для получения пользователя.
-// type Getter interface {
-// 	SelectUserID(context.Context, *model.Auth) error
-// }
+type Getter interface {
+	SelectUserID(context.Context, *model.Auth) error
+}
 
 // Repository - интерфейс для базы данных.
 type Repository interface {
 	Pinger
 	Inserter
 	Exister
-	// Getter
+	Getter
 	Close() error
 }
 
@@ -94,14 +94,14 @@ func (u *Usecase) Ping(ctx context.Context) error {
 }
 
 // Register - регистрация/аутентификация пользователя.
-func (u *Usecase) Register(ctx context.Context, auth model.Auth) (string, error) {
+func (u *Usecase) Register(ctx context.Context, auth model.Auth) error {
 	var exists bool
 	exists, err := u.repo.ExistLogin(ctx, auth.Login)
 	if err != nil {
-		return "", err
+		return err
 	}
 	if exists {
-		return "", ErrLoginAlreadyExist
+		return ErrLoginAlreadyExist
 	}
 
 	uuid := uuidv7.New()
@@ -111,9 +111,38 @@ func (u *Usecase) Register(ctx context.Context, auth model.Auth) (string, error)
 
 	if err := u.repo.InsertUser(ctx, auth); err != nil {
 		if errors.Is(err, repository.ErrUserAlreadyExists) {
-			return "", ErrLoginAlreadyExist
+			return ErrLoginAlreadyExist
 		}
+		return err
+	}
+
+	return nil
+}
+
+// Login - аутентификация пользователя.
+func (u *Usecase) Login(ctx context.Context, auth *model.Auth) (string, error) {
+	var exists bool
+	exists, err := u.repo.ExistLogin(ctx, auth.Login)
+	if err != nil {
 		return "", err
+	}
+	if !exists {
+		return "", ErrUserNotFound
+	}
+
+	auth.PasswordHash = u.crypto.Create(auth.Password, passwordHashLength)
+
+	exists, err = u.repo.ExistHashPassword(ctx, auth.PasswordHash)
+	if err != nil {
+		return "", err
+	}
+	if !exists {
+		return "", ErrUserAlreadyExist
+	}
+
+	err = u.repo.SelectUserID(ctx, auth)
+	if err != nil {
+		return "", ErrBuildingToken
 	}
 
 	token, err := u.auth.BuildJWT(u.config.JWTSecret, auth.GetID())

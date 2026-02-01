@@ -15,11 +15,11 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
-	// "github.com/samborkent/uuidv7"
-
 	"github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/lib/pq"
+
+	"github.com/google/uuid"
 )
 
 // InitDB - инициализация БД.
@@ -49,7 +49,6 @@ type Repo struct {
 func New(db *sql.DB) (*Repo, error) {
 	if err := db.Ping(); err != nil {
 		db.Close()
-		// TODO: какая ошибка errDBClosed
 		return nil, fmt.Errorf("path: internal/server/repository/postgres/postgres.go, func New(), failed ping db: %w", err)
 	}
 
@@ -127,6 +126,51 @@ func (repo *Repo) ExistLogin(ctx context.Context, login string) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+// ExistHashPassword - проверка существования хэша пароля.
+func (repo *Repo) ExistHashPassword(ctx context.Context, passwordHash string) (bool, error) {
+	repo.m.RLock()
+	defer repo.m.RUnlock()
+
+	var exists bool
+
+	query := "SELECT EXISTS (SELECT password_hash FROM auth WHERE password_hash = $1)"
+	row := repo.db.QueryRowContext(ctx, query, passwordHash)
+
+	err := row.Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("path: internal/server/repository/postgres/postgres.go, func ExistHashPassword(): %w", err)
+	}
+
+	if exists {
+		return true, nil
+	}
+	return false, nil
+}
+
+// SelectUserID - получение ID пользователя.
+func (repo *Repo) SelectUserID(ctx context.Context, auth *model.Auth) error {
+	repo.m.RLock()
+	defer repo.m.RUnlock()
+
+	var ID string
+
+	query := "SELECT id FROM auth WHERE login = $1"
+	row := repo.db.QueryRowContext(ctx, query, auth.Login)
+
+	err := row.Scan(&ID)
+	if err != nil {
+		return fmt.Errorf("path: internal/server/repository/postgres/postgres.go, func SelectUserID(): %w", err)
+	}
+
+	IDv7, err := uuid.Parse(ID)
+	if err != nil {
+		return fmt.Errorf("path: internal/server/repository/postgres/postgres.go, func SelectUserID(): %w", err)
+	}
+
+	auth.ID = model.UserID(IDv7)
+	return nil
 }
 
 // Insert - метод/оркестратор для вставки данных.

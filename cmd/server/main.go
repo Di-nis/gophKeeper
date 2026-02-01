@@ -25,12 +25,12 @@ import (
 
 var (
 	buildVersion = "N/A"
-	buildDate    = "N/A"
+	BuildTime    = "N/A"
 	buildCommit  = "N/A"
 )
 
 func main() {
-	fmt.Printf("Build version: %s\nBuild date: %s\nBuild commit: %s\n", buildVersion, buildDate, buildCommit)
+	fmt.Printf("Build version: %s\nBuild date: %s\nBuild commit: %s\n", buildVersion, BuildTime, buildCommit)
 
 	var err error
 
@@ -77,7 +77,6 @@ func main() {
 
 	<-ctx.Done()
 
-	fmt.Println(cfg.ShutdownTimeout)
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
 	defer cancel()
 

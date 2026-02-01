@@ -122,8 +122,8 @@ message Credentials {
 
 message PaymentCard {
   string number = 1;
-  sint32 expMonth = 2;
-  sint32 expYear = 3;
+  string expMonth = 2;
+  string expYear = 3;
   string cvv = 4;
   string holder = 5;
   string alias = 6;

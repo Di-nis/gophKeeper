@@ -1,17 +1,25 @@
 package cli
 
+// Method - тип данных для имен методов.
+type Method string
+
 // Методы.
 const (
-	MethodGet    = "get"
-	MethodAdd    = "add"
-	MethodDelete = "delete"
-	MethodSync   = "sync"
+	MethodRegister Method = "register"
+	MethodLogin    Method = "login"
+	MethodGet      Method = "get"
+	MethodAdd      Method = "add"
+	MethodDelete   Method = "delete"
+	MethodSync     Method = "sync"
 )
+
+// item - тип данных для имен данных.
+type Item string
 
 // Типы данных.
 const (
-	ItemCredentials = "credentials"
-	ItemPaymentCard = "payment_card"
-	ItemBinary      = "binary"
-	ItemText        = "text"
+	ItemCredentials Item = "credentials"
+	ItemPaymentCard Item = "payment_card"
+	ItemBinary      Item = "binary"
+	ItemText        Item = "text"
 )
