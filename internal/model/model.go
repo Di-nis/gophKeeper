@@ -27,8 +27,8 @@ const (
 // Auth - модель авторизации.
 type Auth struct {
 	ID           UserID    `db:"id"`
-	Login        string    `json:"login" db:"login"`
-	Password     string    `json:"password" db:"password"`
+	Login        string    `json:"login" binding:"required" example:"your_username" db:"login"`
+	Password     string    `json:"password" binding:"required" example:"your_password" db:"password"`
 	PasswordHash string    `db:"password_hash"`
 	Role         Role      `db:"role"`
 	CreatedAt    time.Time `db:"created_at"`
@@ -85,7 +85,6 @@ func (a *Auth) SetRole(role Role) *Auth {
 	return a
 }
 
-
 // Credentials - учетные данные (логин/пароль).
 type Credentials struct {
 	UUID     UserID `json:"-" db:"user_id"`
@@ -105,8 +104,8 @@ func (c *Credentials) SetAlias(a string) { c.Alias = a }
 type PaymentCard struct {
 	UUID     UserID `json:"-" db:"user_id"`
 	Number   string `json:"number" db:"number"`
-	ExpMonth string  `json:"exp_month" db:"exp_month"`
-	ExpYear  string  `json:"exp_year" db:"exp_year"`
+	ExpMonth string `json:"exp_month" db:"exp_month"`
+	ExpYear  string `json:"exp_year" db:"exp_year"`
 	CVV      string `json:"cvv" db:"cvv"`
 	Holder   string `json:"holder" db:"holder"`
 	Alias    string `json:"alias" db:"alias"`

@@ -1,0 +1,109 @@
+basePath: /
+definitions:
+  model.Auth:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      login:
+        example: your_username
+        type: string
+      password:
+        example: your_password
+        type: string
+      passwordHash:
+        type: string
+      role:
+        $ref: '#/definitions/model.Role'
+      updatedAt:
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  model.Role:
+    enum:
+    - user
+    - admin
+    type: string
+    x-enum-varnames:
+    - RoleUser
+    - RoleAdmin
+host: localhost:8080
+info:
+  contact:
+    email: di-nis@ya.ru
+    name: Denis Smirnov
+  description: API для хранения секретов
+  title: GophKeeper
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Получение токена для авторизации
+      parameters:
+      - description: данные пользователя
+        in: body
+        name: Auth
+        required: true
+        schema:
+          $ref: '#/definitions/model.Auth'
+      responses:
+        "200":
+          description: OK
+          headers:
+            Set-Cookie:
+              description: name=auth_user; value=your_token; expires=Mon, 02 Feb 2026
+                13:08:01 GMT; Path=/; Domain=localhost; session_id=abc123; HttpOnly
+                secure=true
+              type: string
+        "400":
+          description: неверный запрос
+        "409":
+          description: пользователя с таким логином уже существует
+        "500":
+          description: внутренная ошибка сервера
+      summary: Login
+      tags:
+      - users
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: Проверка сервиса
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: внутренная ошибка сервера
+      summary: Ping
+      tags:
+      - test
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация пользователя
+      parameters:
+      - description: данные пользователя
+        in: body
+        name: Auth
+        required: true
+        schema:
+          $ref: '#/definitions/model.Auth'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: неверный запрос
+        "409":
+          description: пользователя с таким логином уже существует
+        "500":
+          description: внутренная ошибка сервера
+      summary: Register
+      tags:
+      - users
+swagger: "2.0"

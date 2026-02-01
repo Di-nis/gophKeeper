@@ -44,15 +44,17 @@ func New(pinger Pinger, auth Auth, config *config.Config) *Handler {
 	}
 }
 
+// @Summary Ping
+// @Description Проверка сервиса
+// @Tags test
+// @Accept json
+// @Success 200
+// @Failure 500 "внутренная ошибка сервера"
+// @Router /ping [get]
 // Ping - пинг БД.
 func (h *Handler) Ping(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
 	defer cancel()
-
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
 
 	err := h.Pinger.Ping(ctx)
 	if err != nil {
@@ -63,6 +65,16 @@ func (h *Handler) Ping(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Register
+// @Description Регистрация пользователя
+// @Tags users
+// @Accept json
+// @Param Auth body model.Auth true "данные пользователя"
+// @Success 200
+// @Failure 400 "неверный запрос"
+// @Failure 409 "пользователя с таким логином уже существует"
+// @Failure 500 "внутренная ошибка сервера"
+// @Router /register [post]
 // Register - регистрация пользователя.
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	var err error
@@ -85,8 +97,18 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-
-// Login - аутентификация пользователя.
+// @Summary Login
+// @Description Получение токена для авторизации
+// @Tags users
+// @Accept json
+// @Param Auth body model.Auth true "данные пользователя"
+// @Success 200
+// @Header 200 {string} Set-Cookie "name=auth_user; value=your_token; expires=Mon, 02 Feb 2026 13:08:01 GMT; Path=/; Domain=localhost; session_id=abc123; HttpOnly secure=true"
+// @Failure 400 "неверный запрос"
+// @Failure 404 "пользователя с таким логином не найден"
+// @Failure 500 "внутренная ошибка сервера"
+// @Router /login [post]
+// Login - Получение токена для авторизации.
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	a := &model.Auth{}
 
@@ -101,7 +123,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, user.ErrUserNotFound) {
 			logger.Sugar.Errorf("user not found registered: %v", err)
-			w.WriteHeader(http.StatusUnauthorized)
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 

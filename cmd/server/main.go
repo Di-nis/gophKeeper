@@ -1,4 +1,14 @@
 // Package main - точка входа в приложение GophKeeper.
+// @title GophKeeper
+// @version 1.0
+// @description API для хранения секретов
+
+// @contact.name Denis Smirnov
+// @contact.email di-nis@ya.ru
+
+// @host localhost:8080
+// @BasePath /
+
 package main
 
 import (
@@ -81,4 +91,6 @@ func main() {
 	defer cancel()
 
 	application.Stop(shutdownCtx)
+
+	<-shutdownCtx.Done()
 }
