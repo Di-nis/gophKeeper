@@ -105,7 +105,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 // @Success 200
 // @Header 200 {string} Set-Cookie "name=auth_user; value=your_token; expires=Mon, 02 Feb 2026 13:08:01 GMT; Path=/; Domain=localhost; session_id=abc123; HttpOnly secure=true"
 // @Failure 400 "неверный запрос"
-// @Failure 404 "пользователя с таким логином не найден"
+// @Failure 404 "пользователь с таким логином не найден"
 // @Failure 500 "внутренная ошибка сервера"
 // @Router /login [post]
 // Login - Получение токена для авторизации.

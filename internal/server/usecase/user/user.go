@@ -67,7 +67,7 @@ type Repository interface {
 
 // Auth - интерфейс для аутентификации пользователя.
 type Auth interface {
-	BuildJWT(string, model.UserID) (string, error)
+	BuildJWT(string, string, model.UserID) (string, error)
 }
 
 // Usecase - какое-то описание.
@@ -145,7 +145,9 @@ func (u *Usecase) Login(ctx context.Context, auth *model.Auth) (string, error) {
 		return "", ErrBuildingToken
 	}
 
-	token, err := u.auth.BuildJWT(u.config.JWTSecret, auth.GetID())
+
+	sessionID := generateSessionID()
+	token, err := u.auth.BuildJWT(u.config.JWTSecret, sessionID, auth.GetID())
 	if err != nil {
 		return "", ErrBuildingToken
 	}

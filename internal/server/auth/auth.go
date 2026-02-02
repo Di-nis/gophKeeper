@@ -35,6 +35,7 @@ type contextKey string
 type Claims struct {
 	jwt.RegisteredClaims
 	UserID model.UserID
+	SID    string
 }
 
 // New - создание экземпляра Claims.
@@ -43,12 +44,13 @@ func New() *Claims {
 }
 
 // BuildJWT - создание JWT токена.
-func (c *Claims) BuildJWT(secretKey string, userID model.UserID) (string, error) {
+func (c *Claims) BuildJWT(secretKey, sessionID string, userID model.UserID) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TokenExp)),
 		},
 		UserID: userID,
+		SID:    sessionID,
 	})
 
 	tokenOut, err := token.SignedString([]byte(secretKey))
