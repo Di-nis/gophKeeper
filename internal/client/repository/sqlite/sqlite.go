@@ -1,12 +1,14 @@
 package sqlite
 
 import (
-	"fmt"
-	"errors"
 	"context"
 	"database/sql"
-	"github.com/Di-nis/gophKeeper/internal/model"
+	"errors"
+	"fmt"
+
 	"github.com/Di-nis/gophKeeper/internal/client/repository"
+	"github.com/Di-nis/gophKeeper/internal/model"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -87,6 +89,7 @@ func (repo *Repo) execInsert(
 	}
 	return nil
 }
+
 // InsertCredentials - метод для вставки Credentials.
 func (repo *Repo) InsertCredentials(ctx context.Context, cred *model.Credentials) error {
 	query := `
@@ -158,4 +161,3 @@ func (repo *Repo) InsertCredentials(ctx context.Context, cred *model.Credentials
 // 		text.Info,
 // 	)
 // }
-

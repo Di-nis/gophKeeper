@@ -8,7 +8,6 @@ import (
 	"github.com/Di-nis/gophKeeper/internal/model"
 )
 
-
 // Consumer - структура для чтения данных из файла.
 type Consumer struct {
 	file    *os.File

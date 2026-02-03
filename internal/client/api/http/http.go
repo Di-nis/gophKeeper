@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Di-nis/gophKeeper/internal/model"
 	"github.com/Di-nis/gophKeeper/internal/client/config"
+	"github.com/Di-nis/gophKeeper/internal/model"
 	"github.com/Di-nis/gophKeeper/pkg/logger"
 )
 

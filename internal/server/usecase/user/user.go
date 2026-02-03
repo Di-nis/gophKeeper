@@ -145,7 +145,6 @@ func (u *Usecase) Login(ctx context.Context, auth *model.Auth) (string, error) {
 		return "", ErrBuildingToken
 	}
 
-
 	sessionID := generateSessionID()
 	token, err := u.auth.BuildJWT(u.config.JWTSecret, sessionID, auth.GetID())
 	if err != nil {
