@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Di-nis/gophKeeper/internal/model"
 	"github.com/caarlos0/env/v6"
 )
 
@@ -122,35 +123,18 @@ func (c *Config) loanFromFlags() {
 	}
 }
 
-type Duration struct {
-	time.Duration
-}
-
-func (d *Duration) UnmarshalJSON(b []byte) error {
-	var s string
-	if err := json.Unmarshal(b, &s); err != nil {
-		return err
-	}
-	dur, err := time.ParseDuration(s)
-	if err != nil {
-		return err
-	}
-	d.Duration = dur
-	return nil
-}
-
 type ConfigAlias struct {
-	ServerAddressHTTP string   `json:"server_address_HTTP"`
-	BaseURLHTTP       string   `json:"base_url_HTTP"`
-	ServerAddressGRPC string   `json:"server_address_gRPC"`
-	BaseURLGRPC       string   `json:"base_url_gRPC"`
-	LogLevel          string   `json:"log_level"`
-	DataBaseDSN       string   `json:"database_dsn"`
-	EnableHTTPS       bool     `json:"enable_https"`
-	CertFilePath      string   `json:"cert_file_path"`
-	KeyFilePath       string   `json:"key_file_path"`
-	TrustedSubnet     string   `json:"trusted_subnet"`
-	ShutdownTimeout   Duration `json:"shutdown_timeout"`
+	ServerAddressHTTP string         `json:"server_address_HTTP"`
+	BaseURLHTTP       string         `json:"base_url_HTTP"`
+	ServerAddressGRPC string         `json:"server_address_gRPC"`
+	BaseURLGRPC       string         `json:"base_url_gRPC"`
+	LogLevel          string         `json:"log_level"`
+	DataBaseDSN       string         `json:"database_dsn"`
+	EnableHTTPS       bool           `json:"enable_https"`
+	CertFilePath      string         `json:"cert_file_path"`
+	KeyFilePath       string         `json:"key_file_path"`
+	TrustedSubnet     string         `json:"trusted_subnet"`
+	ShutdownTimeout   model.Duration `json:"shutdown_timeout"`
 }
 
 // loanFromFile - загрузка конфигурации из файла.

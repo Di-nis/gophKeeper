@@ -4,7 +4,6 @@ package http
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/Di-nis/gophKeeper/internal/client/config"
@@ -37,7 +36,7 @@ func NewURLPath() *URLPath {
 
 // Client - HTTP-клиент.
 type Client struct {
-	HTTPClient    *http.Client
+	Client        *http.Client
 	serverAddress string
 	tokenStorage  string
 	urlPath       *URLPath
@@ -45,11 +44,16 @@ type Client struct {
 
 // New - конструктор клиента.
 func New(cfg *config.Config) *Client {
-	httpClient := &http.Client{}
+	httpClient := &http.Client{
+		Timeout: cfg.HTTPClientTimeout,
+		Transport: &http.Transport{
+			MaxIdleConnsPerHost: cfg.MaxIdleConnsPerHost,
+		},
+	}
 
 	return &Client{
-		HTTPClient:    httpClient,
-		serverAddress: cfg.ServerAddressHTTP,
+		Client:        httpClient,
+		serverAddress: cfg.BaseURLHTTP,
 		tokenStorage:  cfg.TokenStorage,
 		urlPath:       NewURLPath(),
 	}
@@ -57,6 +61,9 @@ func New(cfg *config.Config) *Client {
 
 // Register - регистрация пользователя.
 func (c *Client) Register(ctx context.Context, auth model.Auth) error {
+	ctx, cancel := context.WithTimeout(ctx, c.Client.Timeout)
+	defer cancel()
+
 	if auth.Login == "" || auth.Password == "" {
 		return errEmptyLoginOrPassword
 	}
@@ -78,7 +85,7 @@ func (c *Client) Register(ctx context.Context, auth model.Auth) error {
 		}
 		req.Header.Set("Content-Type", "application/json")
 
-		resp, err = c.HTTPClient.Do(req)
+		resp, err = c.Client.Do(req)
 		if err != nil {
 			lastResErr = err
 			continue
@@ -106,6 +113,9 @@ func (c *Client) Register(ctx context.Context, auth model.Auth) error {
 
 // Login - авторизация пользователя.
 func (c *Client) Login(ctx context.Context, auth model.Auth) error {
+	ctx, cancel := context.WithTimeout(ctx, c.Client.Timeout)
+	defer cancel()
+
 	if auth.Login == "" || auth.Password == "" {
 		return errEmptyLoginOrPassword
 	}
@@ -121,17 +131,13 @@ func (c *Client) Login(ctx context.Context, auth model.Auth) error {
 			return err
 		}
 
-		if ctx.Err() != nil {
-			fmt.Println("ctx already canceled:", ctx.Err())
-		}
-
 		req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.serverAddress+c.urlPath.login, body)
 		if err != nil {
 			return err
 		}
 		req.Header.Set("Content-Type", "application/json")
 
-		resp, err = c.HTTPClient.Do(req)
+		resp, err = c.Client.Do(req)
 		if err != nil {
 			lastResErr = err
 			continue
@@ -157,7 +163,7 @@ func (c *Client) Login(ctx context.Context, auth model.Auth) error {
 	var token string
 	cookie := resp.Cookies()
 	if len(cookie) == 0 {
-		logger.Sugar.Warnw("path: internal/client/api/http/http.go, func Login(), cookie is empty")
+		logger.Sugar.Warnw("path: internal/client/api/http/http.go, func Login(), пользователь не зарегистрирован")
 		return errEmptyCookie
 	}
 

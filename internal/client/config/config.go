@@ -6,20 +6,24 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
+	"github.com/Di-nis/gophKeeper/internal/model"
 	"github.com/caarlos0/env/v6"
 )
 
 // Config - структура конфигурации приложения.
 type Config struct {
-	ServerAddressHTTP string `env:"SERVER_ADDRESS_HTTP"`
-	ServerAddressGRPC string `env:"SERVER_ADDRESS_GRPC"`
-	BaseURLHTTP       string `env:"BASE_URL_HTTP"`
-	BaseURLGRPC       string `env:"BASE_URL_GRPC"`
-	LogLevel          string `env:"LOG_LEVEL"`
-	Config            string `env:"CONFIG"`
-	TokenStorage      string `env:"TOKEN_STORAGE"`
-	DatabasePath      string `env:"DATABASE_PATH"`
+	ServerAddressHTTP   string        `env:"SERVER_ADDRESS_HTTP"`
+	ServerAddressGRPC   string        `env:"SERVER_ADDRESS_GRPC"`
+	BaseURLHTTP         string        `env:"BASE_URL_HTTP"`
+	BaseURLGRPC         string        `env:"BASE_URL_GRPC"`
+	LogLevel            string        `env:"LOG_LEVEL"`
+	Config              string        `env:"CONFIG"`
+	TokenStorage        string        `env:"TOKEN_STORAGE"`
+	DatabasePath        string        `env:"DATABASE_PATH"`
+	HTTPClientTimeout   time.Duration `env:"HTTP_CLIENT_TIMEOUT"`
+	MaxIdleConnsPerHost int           `env:"MAX_IDLE_CONNS_PER_HOST"`
 }
 
 // New - функция для создания конфигурации.
@@ -60,13 +64,15 @@ func (c *Config) loanFromFile() error {
 	}
 
 	type ConfigAlias struct {
-		ServerAddressHTTP string `json:"SERVER_ADDRESS_HTTP"`
-		ServerAddressGRPC string `json:"SERVER_ADDRESS_GRPC"`
-		BaseURLHTTP       string `json:"BASE_URL_HTTP"`
-		BaseURLGRPC       string `json:"BASE_URL_GRPC"`
-		LogLevel          string `json:"log_level"`
-		TokenStorage      string `json:"token_storage"`
-		DatabasePath      string `json:"database_path"`
+		ServerAddressHTTP   string         `json:"SERVER_ADDRESS_HTTP"`
+		ServerAddressGRPC   string         `json:"SERVER_ADDRESS_GRPC"`
+		BaseURLHTTP         string         `json:"BASE_URL_HTTP"`
+		BaseURLGRPC         string         `json:"BASE_URL_GRPC"`
+		LogLevel            string         `json:"log_level"`
+		TokenStorage        string         `json:"token_storage"`
+		DatabasePath        string         `json:"database_path"`
+		HTTPClientTimeout   model.Duration `json:"HTTP_client_timeout"`
+		MaxIdleConnsPerHost int            `json:"max_idle_conns_per_host"`
 	}
 
 	var configAlias ConfigAlias
@@ -106,6 +112,12 @@ func (c *Config) loanFromFile() error {
 	}
 	if c.DatabasePath == "" {
 		c.DatabasePath = configAlias.DatabasePath
+	}
+	if c.HTTPClientTimeout == 0 {
+		c.HTTPClientTimeout = configAlias.HTTPClientTimeout.Duration
+	}
+	if c.MaxIdleConnsPerHost == 0 {
+		c.MaxIdleConnsPerHost = configAlias.MaxIdleConnsPerHost
 	}
 
 	return nil

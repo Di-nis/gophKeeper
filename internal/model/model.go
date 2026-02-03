@@ -3,6 +3,8 @@ package model
 import (
 	"time"
 
+	"encoding/json"
+
 	"github.com/samborkent/uuidv7"
 )
 
@@ -152,4 +154,23 @@ type Common struct {
 	PaymentCard []*PaymentCard
 	Binary      []*Binary
 	Text        []*Text
+}
+
+// Duration - модель для хранения длительности.
+type Duration struct {
+	time.Duration
+}
+
+// MarshalJSON - реализация интерфейса MarshalJSON.
+func (d *Duration) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	dur, err := time.ParseDuration(s)
+	if err != nil {
+		return err
+	}
+	d.Duration = dur
+	return nil
 }

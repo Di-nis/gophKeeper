@@ -10,6 +10,10 @@ import (
 	"github.com/Di-nis/gophKeeper/internal/client/usecase"
 	"github.com/Di-nis/gophKeeper/pkg/logger"
 
+	gc "github.com/Di-nis/gophKeeper/internal/client/api/grpc"
+	hc "github.com/Di-nis/gophKeeper/internal/client/api/http"
+	repository "github.com/Di-nis/gophKeeper/internal/client/repository/local"
+
 	"github.com/joho/godotenv"
 )
 
@@ -39,7 +43,18 @@ func main() {
 		log.Fatal("logger initialization error:", err)
 	}
 
-	uc, err := usecase.New(cfg)
+	httpClient := hc.New(cfg)
+	gRPCClient, err := gc.New(cfg)
+	if err != nil {
+		log.Fatal("gRPC client initialization error:", err)
+	}
+
+	repo, err := repository.New(cfg.DatabasePath)
+	if err != nil {
+		log.Fatal("repo initialization error:", err)
+	}
+
+	uc, err := usecase.New(cfg, httpClient, gRPCClient, repo)
 	if err != nil {
 		log.Fatal("service initialization error` ", err)
 	}
@@ -49,4 +64,14 @@ func main() {
 		log.Fatal("request error: ", err)
 	}
 
+	defer cancel()
+
+	httpClient.Client.CloseIdleConnections()
+	if err = gRPCClient.Close(); err != nil {
+		log.Fatal("gRPC client close error: ", err)
+	}
+
+	if err = repo.Close(); err != nil {
+		log.Fatal("repo close error: ", err)
+	}
 }

@@ -57,5 +57,5 @@ func (o *Output) PrintSuccess() {
 
 // PrintError - вывод ошибок.
 func (o *Output) PrintError() {
-	fmt.Print("ошибка выполнения, повторите попыптку")
+	fmt.Print("ошибка выполнения, повторите попыптку/t")
 }

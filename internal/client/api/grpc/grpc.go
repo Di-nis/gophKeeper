@@ -3,7 +3,6 @@ package grpc
 
 import (
 	"context"
-	"os"
 	"time"
 
 	pb "github.com/Di-nis/gophKeeper/pkg/proto"
@@ -24,8 +23,9 @@ const (
 
 // Client - структура gRPC-клиента.
 type Client struct {
-	grpcClient pb.GophKeeperServiceClient
-	timeout    time.Duration
+	Client  pb.GophKeeperServiceClient
+	conn    *grpc.ClientConn
+	timeout time.Duration
 }
 
 // New - создание нового клиента.
@@ -35,21 +35,26 @@ func New(c *config.Config) (*Client, error) {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithChainUnaryInterceptor(auth.Interceptor(c.TokenStorage)),
 	)
+
 	if err != nil {
-		os.Exit(1)
+		return nil, err
 	}
-	// defer conn.Close()
 
 	return &Client{
-		grpcClient: pb.NewGophKeeperServiceClient(conn),
-		timeout:    Timeout,
+		Client:  pb.NewGophKeeperServiceClient(conn),
+		conn:    conn,
+		timeout: Timeout,
 	}, nil
+}
+
+func (c *Client) Close() error {
+	return c.conn.Close()
 }
 
 // AddCredentials - метод для создания учетных данных.
 func (c *Client) AddCredentials(ctx context.Context, cred model.Credentials) (string, error) {
-	// ctx, _ := context.WithTimeout(context.Background(), c.timeout)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 
 	credPb := &pb.Credentials{}
 	credPb.SetLogin(cred.Login)
@@ -59,7 +64,7 @@ func (c *Client) AddCredentials(ctx context.Context, cred model.Credentials) (st
 	req := &pb.AddCredentialsRequest{}
 	req.SetCredentials(credPb)
 
-	response, err := c.grpcClient.AddCredentials(ctx, req)
+	response, err := c.Client.AddCredentials(ctx, req)
 	if err != nil {
 		return "", err
 	}
@@ -67,15 +72,15 @@ func (c *Client) AddCredentials(ctx context.Context, cred model.Credentials) (st
 }
 
 // GetCredentials - метод для получения учетных данных.
-func (c *Client) GetCredentials(alias string) (model.Credentials, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) GetCredentials(ctx context.Context, alias string) (model.Credentials, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	req := &pb.GetCredentialsRequest{}
 	req.SetAlias(alias)
 
 	cred := model.Credentials{}
-	response, err := c.grpcClient.GetCredentials(ctx, req)
+	response, err := c.Client.GetCredentials(ctx, req)
 	if err != nil {
 		return cred, err
 	}
@@ -88,22 +93,23 @@ func (c *Client) GetCredentials(alias string) (model.Credentials, error) {
 }
 
 // DelCredentials - метод для удаления учетных данных.
-func (c *Client) DelCredentials(alias string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) DelCredentials(ctx context.Context, alias string) error {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	req := &pb.DelCredentialsRequest{}
 	req.SetAlias(alias)
 
-	_, err := c.grpcClient.DelCredentials(ctx, req)
+	_, err := c.Client.DelCredentials(ctx, req)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) AddPaymentCard(card model.PaymentCard) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+// AddPaymentCard - метод для добавления данных по карте.
+func (c *Client) AddPaymentCard(ctx context.Context, card model.PaymentCard) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	cardPb := &pb.PaymentCard{}
@@ -116,7 +122,7 @@ func (c *Client) AddPaymentCard(card model.PaymentCard) (string, error) {
 	req := &pb.AddPaymentCardRequest{}
 	req.SetCard(cardPb)
 
-	response, err := c.grpcClient.AddPaymentCard(ctx, req)
+	response, err := c.Client.AddPaymentCard(ctx, req)
 	if err != nil {
 		return "", err
 	}
@@ -124,15 +130,15 @@ func (c *Client) AddPaymentCard(card model.PaymentCard) (string, error) {
 }
 
 // GetPaymentCard - метод для получения данных по карте.
-func (c *Client) GetPaymentCard(alias string) (model.PaymentCard, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) GetPaymentCard(ctx context.Context, alias string) (model.PaymentCard, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	req := &pb.GetPaymentCardRequest{}
 	req.SetAlias(alias)
 
 	card := model.PaymentCard{}
-	response, err := c.grpcClient.GetPaymentCard(ctx, req)
+	response, err := c.Client.GetPaymentCard(ctx, req)
 	if err != nil {
 		return card, err
 	}
@@ -148,14 +154,14 @@ func (c *Client) GetPaymentCard(alias string) (model.PaymentCard, error) {
 }
 
 // DelPaymentCard - метод для удаления данных по карте.
-func (c *Client) DelPaymentCard(alias string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) DelPaymentCard(ctx context.Context, alias string) error {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	req := &pb.DelPaymentCardRequest{}
 	req.SetAlias(alias)
 
-	_, err := c.grpcClient.DelPaymentCard(ctx, req)
+	_, err := c.Client.DelPaymentCard(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -163,8 +169,8 @@ func (c *Client) DelPaymentCard(alias string) error {
 }
 
 // AddBinary - метод для добавления бинарных данных.
-func (c *Client) AddBinary(bin model.Binary) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) AddBinary(ctx context.Context, bin model.Binary) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	binPb := &pb.Binary{}
@@ -174,7 +180,7 @@ func (c *Client) AddBinary(bin model.Binary) (string, error) {
 	req := &pb.AddBinaryRequest{}
 	req.SetBin(binPb)
 
-	response, err := c.grpcClient.AddBinary(ctx, req)
+	response, err := c.Client.AddBinary(ctx, req)
 	if err != nil {
 		return "", err
 	}
@@ -182,15 +188,15 @@ func (c *Client) AddBinary(bin model.Binary) (string, error) {
 }
 
 // GetBinary - метод для получения бинарных данных.
-func (c *Client) GetBinary(alias string) (model.Binary, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) GetBinary(ctx context.Context, alias string) (model.Binary, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	req := &pb.GetBinaryRequest{}
 	req.SetAlias(alias)
 
 	bin := model.Binary{}
-	response, err := c.grpcClient.GetBinary(ctx, req)
+	response, err := c.Client.GetBinary(ctx, req)
 	if err != nil {
 		return bin, err
 	}
@@ -202,14 +208,14 @@ func (c *Client) GetBinary(alias string) (model.Binary, error) {
 }
 
 // DelBinary - метод для удаления бинарных данных.
-func (c *Client) DelBinary(alias string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) DelBinary(ctx context.Context, alias string) error {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	req := &pb.DelBinaryRequest{}
 	req.SetAlias(alias)
 
-	_, err := c.grpcClient.DelBinary(ctx, req)
+	_, err := c.Client.DelBinary(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -217,8 +223,8 @@ func (c *Client) DelBinary(alias string) error {
 }
 
 // AddText - метод для добавления текстовых данных.
-func (c *Client) AddText(text model.Text) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) AddText(ctx context.Context, text model.Text) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	textPb := &pb.Text{}
@@ -228,7 +234,7 @@ func (c *Client) AddText(text model.Text) (string, error) {
 	req := &pb.AddTextRequest{}
 	req.SetText(textPb)
 
-	response, err := c.grpcClient.AddText(ctx, req)
+	response, err := c.Client.AddText(ctx, req)
 	if err != nil {
 		return "", err
 	}
@@ -236,15 +242,15 @@ func (c *Client) AddText(text model.Text) (string, error) {
 }
 
 // GetText - метод для получения текстовых данных.
-func (c *Client) GetText(alias string) (model.Text, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) GetText(ctx context.Context, alias string) (model.Text, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	req := &pb.GetTextRequest{}
 	req.SetAlias(alias)
 
 	text := model.Text{}
-	response, err := c.grpcClient.GetText(ctx, req)
+	response, err := c.Client.GetText(ctx, req)
 	if err != nil {
 		return text, err
 	}
@@ -255,8 +261,8 @@ func (c *Client) GetText(alias string) (model.Text, error) {
 }
 
 // DelText - метод для удаления текстовых данных.
-func (c *Client) DelText(alias string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) DelText(ctx context.Context, alias string) error {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	req := &pb.DelTextRequest{}
@@ -264,7 +270,7 @@ func (c *Client) DelText(alias string) error {
 
 	// var response *emptypb.Empty
 
-	_, err := c.grpcClient.DelText(ctx, req)
+	_, err := c.Client.DelText(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -272,13 +278,13 @@ func (c *Client) DelText(alias string) error {
 }
 
 // Sync - синхронизация данных.
-func (c *Client) Sync() (model.Common, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
+func (c *Client) Sync(ctx context.Context) (model.Common, error) {
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
 	var req emptypb.Empty
 
-	response, err := c.grpcClient.ListUserData(ctx, &req)
+	response, err := c.Client.ListUserData(ctx, &req)
 	if err != nil {
 		return model.Common{}, err
 	}

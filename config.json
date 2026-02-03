@@ -10,5 +10,7 @@
     "enable_https": false,
     "shutdown_timeout": "10s",
     "token_storage": "token.txt",
-    "database_path": "client.db"
+    "database_path": "client.db",
+    "HTTP_client_timeout": "5s",
+    "max_idle_conns_per_host": 5
 }
