@@ -18,9 +18,10 @@ var (
 	ErrDataAlreadyExists = errors.New("data already exist")
 	// ErrNoData - no data.
 	ErrNoData = errors.New("no data")
-
+	// ErrUserAlreadyExists - data already exist
 	ErrUserAlreadyExists = errors.New("data already exist")
-	ErrUserNotFound      = errors.New("user not found error")
-
+	// ErrUserNotFound - user not found error
+	ErrUserNotFound = errors.New("user not found error")
+	// ErrUnknownType - unknown type
 	ErrUnknownType = errors.New("unknown type")
 )

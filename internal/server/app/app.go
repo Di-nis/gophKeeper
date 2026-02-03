@@ -39,12 +39,14 @@ func (a *App) Start() {
 }
 
 // Stop - остановка приложения.
-func (a *App) Stop(ctx context.Context) {
+func (a *App) Stop(ctx context.Context) error {
 	for _, s := range a.servers {
 		if err := s.Stop(ctx); err != nil {
 			logger.Sugar.Infof("internal/server/app/app.go,  App.Start(), stop server error: %v", err)
+			return err
 		}
 	}
+	return nil
 }
 
 // InitRepoPostgres - инициализация репозитория для работы с PostgreSQL.

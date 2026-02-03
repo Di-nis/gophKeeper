@@ -31,6 +31,7 @@ import (
 	httpServer "github.com/Di-nis/gophKeeper/internal/server/server/http"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/sync/errgroup"
 )
 
 var (
@@ -90,7 +91,11 @@ func main() {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
 	defer cancel()
 
-	application.Stop(shutdownCtx)
+	g, shutdownCtx := errgroup.WithContext(shutdownCtx)
+
+	g.Go(func() error {
+		return application.Stop(shutdownCtx)
+	})
 
 	<-shutdownCtx.Done()
 }
