@@ -47,9 +47,9 @@ func New(c *config.Config) (*Client, error) {
 }
 
 // AddCredentials - метод для создания учетных данных.
-func (c *Client) AddCredentials(cred model.Credentials) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
-	defer cancel()
+func (c *Client) AddCredentials(ctx context.Context, cred model.Credentials) (string, error) {
+	// ctx, _ := context.WithTimeout(context.Background(), c.timeout)
+	// defer cancel()
 
 	credPb := &pb.Credentials{}
 	credPb.SetLogin(cred.Login)
@@ -271,15 +271,32 @@ func (c *Client) DelText(alias string) error {
 	return nil
 }
 
-func (c *Client) ListUserData(userID model.UserID) ([]model.Credentials, []model.PaymentCard, []model.Binary, []model.Text, error) {
+// Sync - синхронизация данных.
+func (c *Client) Sync() (model.Common, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
 	defer cancel()
 
 	var req emptypb.Empty
 
-	_, err := c.grpcClient.ListUserData(ctx, &req)
+	response, err := c.grpcClient.ListUserData(ctx, &req)
 	if err != nil {
-		return nil, nil, nil, nil, err
+		return model.Common{}, err
 	}
-	return nil, nil, nil, nil, nil
+
+	credsPb := response.GetCredentials()
+	cardsPb := response.GetPaymentCard()
+	binsPb := response.GetBinary()
+	textsPb := response.GetText()
+
+	creds := convertCreds(credsPb)
+	cards := convertCards(cardsPb)
+	bins := convertBinary(binsPb)
+	texts := convertText(textsPb)
+
+	return model.Common{
+		Credentials: creds,
+		PaymentCard: cards,
+		Binary:      bins,
+		Text:        texts,
+	}, nil
 }

@@ -3,11 +3,17 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/Di-nis/gophKeeper/internal/client/cli"
 	in "github.com/Di-nis/gophKeeper/internal/client/cli/input"
 	out "github.com/Di-nis/gophKeeper/internal/client/cli/output"
+	"github.com/Di-nis/gophKeeper/internal/client/config"
+	repo "github.com/Di-nis/gophKeeper/internal/client/repository/local"
 	"github.com/Di-nis/gophKeeper/internal/model"
+
+	gc "github.com/Di-nis/gophKeeper/internal/client/api/grpc"
+	hc "github.com/Di-nis/gophKeeper/internal/client/api/http"
 )
 
 var (
@@ -21,12 +27,13 @@ var (
 
 // Repository - интерфейс для вставки данных в базу данных.
 type Repository interface {
-	// Insert(context.Context, any) error
+	Write(model.Common) error
+	Close() error
 }
 
 // Client - интерфейс для работы с клиентом.
 type ClientG interface {
-	AddCredentials(model.Credentials) (string, error)
+	AddCredentials(context.Context, model.Credentials) (string, error)
 	GetCredentials(string) (model.Credentials, error)
 	DelCredentials(string) error
 
@@ -41,6 +48,8 @@ type ClientG interface {
 	AddText(model.Text) (string, error)
 	GetText(string) (model.Text, error)
 	DelText(string) error
+
+	Sync() (model.Common, error)
 }
 
 // ClientH - интерфейс для работы с клиентом.
@@ -59,19 +68,45 @@ type Usecase struct {
 }
 
 // New - создание структуры Usecase.
-// func New(clientG ClientG, clientH ClientH, in in.Input, out out.Output, repo Repository) *Usecase {
-func New(clientG ClientG, clientH ClientH, in in.Input, out out.Output) *Usecase {
-	return &Usecase{
-		clientGRPC: clientG,
-		clientHTTP: clientH,
-		input:      in,
-		Output:     out,
-		// repo:       repo,
+func New(cfg *config.Config) (*Usecase, error) {
+	input := in.New()
+	output := out.New()
+
+	httpClient := hc.New(cfg)
+	gRPCClient, err := gc.New(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("gRPC client initialization error:", err)
 	}
+
+	repo, err := repo.New(cfg.DatabasePath)
+	if err != nil {
+		return nil, fmt.Errorf("repo initialization error:", err)
+	}
+
+	return &Usecase{
+		clientGRPC: gRPCClient,
+		clientHTTP: httpClient,
+		input:      input,
+		Output:     output,
+		repo:       repo,
+	}, nil
 }
 
 // Execute - метод для выполнения команд.
 func (u *Usecase) Execute(ctx context.Context) error {
+	u.input.Parser()
+
+	if err := u.router(ctx); err != nil {
+		u.Output.PrintError()
+		return err
+	}
+
+	u.Output.PrintSuccess()
+	return nil
+}
+
+// Execute - метод для выполнения команд.
+func (u *Usecase) router(ctx context.Context) error {
 	valuesOut := make([]string, 0)
 
 	switch u.input.Method {
@@ -86,7 +121,7 @@ func (u *Usecase) Execute(ctx context.Context) error {
 			return err
 		}
 	case cli.MethodAdd:
-		alias, err := u.Adder()
+		alias, err := u.Adder(ctx)
 		if err != nil {
 			return err
 		}
@@ -100,6 +135,11 @@ func (u *Usecase) Execute(ctx context.Context) error {
 		valuesOut = append(valuesOut, values...)
 	case cli.MethodDelete:
 		err := u.Deleter()
+		if err != nil {
+			return err
+		}
+	case cli.MethodSync:
+		err := u.sync(ctx)
 		if err != nil {
 			return err
 		}
@@ -127,14 +167,14 @@ func (u *Usecase) login(ctx context.Context) error {
 }
 
 // Adder - общий метод по добавлению данных.
-func (u *Usecase) Adder() (string, error) {
+func (u *Usecase) Adder(ctx context.Context) (string, error) {
 	switch u.input.Item {
 	case cli.ItemCredentials:
 		cred, err := getCredentials(u.input.Values)
 		if err != nil {
 			return "", err
 		}
-		return u.clientGRPC.AddCredentials(cred)
+		return u.clientGRPC.AddCredentials(ctx, cred)
 	case cli.ItemPaymentCard:
 		card, err := getPaymentCard(u.input.Values)
 		if err != nil {
@@ -217,4 +257,14 @@ func (u *Usecase) Deleter() error {
 		return ErrUnknownType
 	}
 
+}
+
+// sync - синхронизация данных.
+func (u *Usecase) sync(ctx context.Context) error {
+	common, err := u.clientGRPC.Sync()
+	if err != nil {
+		return err
+	}
+
+	return u.repo.Write(common)
 }

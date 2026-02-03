@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/Di-nis/gophKeeper/internal/model"
+	"github.com/Di-nis/gophKeeper/internal/client/config"
 	"github.com/Di-nis/gophKeeper/pkg/logger"
 )
 
@@ -43,13 +44,13 @@ type Client struct {
 }
 
 // New - конструктор клиента.
-func New(serverAddress, tokenStorage string) *Client {
+func New(cfg *config.Config) *Client {
 	httpClient := &http.Client{}
 
 	return &Client{
 		HTTPClient:    httpClient,
-		serverAddress: serverAddress,
-		tokenStorage:  tokenStorage,
+		serverAddress: cfg.ServerAddressHTTP,
+		tokenStorage:  cfg.TokenStorage,
 		urlPath:       NewURLPath(),
 	}
 }
@@ -71,7 +72,7 @@ func (c *Client) Register(ctx context.Context, auth model.Auth) error {
 			return err
 		}
 
-		req, err := http.NewRequest(http.MethodPost, c.serverAddress+c.urlPath.register, body)
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.serverAddress+c.urlPath.register, body)
 		if err != nil {
 			return err
 		}

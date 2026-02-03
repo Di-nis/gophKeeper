@@ -37,12 +37,8 @@ func (o *Output) SetValues(values ...string) *Output {
 	return o
 }
 
-// Print - вывод результатов запроса.
-func (o *Output) Print(err error) {
-	if err != nil {
-		fmt.Print("ошибка выполнения, повторите попыптку")
-	}
-
+// PrintSuccess - вывод успешных результатов запроса.
+func (o *Output) PrintSuccess() {
 	switch o.Method {
 	case cli.MethodRegister:
 		fmt.Print("вы успешно зарегистрированы")
@@ -57,4 +53,9 @@ func (o *Output) Print(err error) {
 	case cli.MethodSync:
 		fmt.Printf("данные %s синхронизированы", o.Item)
 	}
+}
+
+// PrintError - вывод ошибок.
+func (o *Output) PrintError() {
+	fmt.Print("ошибка выполнения, повторите попыптку")
 }

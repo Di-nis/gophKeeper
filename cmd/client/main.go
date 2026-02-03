@@ -6,17 +6,9 @@ import (
 	"fmt"
 	"log"
 
-	"time"
-
 	"github.com/Di-nis/gophKeeper/internal/client/config"
 	"github.com/Di-nis/gophKeeper/internal/client/usecase"
-
-	gc "github.com/Di-nis/gophKeeper/internal/client/api/grpc"
-	hc "github.com/Di-nis/gophKeeper/internal/client/api/http"
 	"github.com/Di-nis/gophKeeper/pkg/logger"
-
-	in "github.com/Di-nis/gophKeeper/internal/client/cli/input"
-	out "github.com/Di-nis/gophKeeper/internal/client/cli/output"
 
 	"github.com/joho/godotenv"
 )
@@ -30,7 +22,7 @@ var (
 func main() {
 	fmt.Printf("Build version: %s\nBuild date: %s\nBuild commit: %s\n", BuildVersion, BuildTime, BuildCommit)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	if err := godotenv.Load(); err != nil {
@@ -47,28 +39,14 @@ func main() {
 		log.Fatal("logger initialization error:", err)
 	}
 
-	// repo, err := app.InitRepoPostgres(cfg)
-	// if err != nil {
-	// 	log.Fatal("repo initialization error:", err)
-	// }
-
-	input := in.New()
-	output := out.New()
-	input.Parser()
-
-	httpClient := hc.New(cfg.BaseURLHTTP, cfg.TokenStorage)
-	gRPCClient, err := gc.New(cfg)
+	uc, err := usecase.New(cfg)
 	if err != nil {
-		log.Fatal("gRPC client initialization error:", err)
+		log.Fatal("service initialization error` ", err)
 	}
-
-	uc := usecase.New(gRPCClient, httpClient, input, output)
 
 	err = uc.Execute(ctx)
 	if err != nil {
 		log.Fatal("request error: ", err)
 	}
-
-	uc.Output.Print(err)
 
 }

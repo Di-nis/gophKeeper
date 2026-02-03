@@ -25,10 +25,6 @@ func InitDB(path string) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// db.SetMaxOpenConns(50)
-	// db.SetMaxIdleConns(50)
-	// db.SetConnMaxLifetime(5 * time.Minute)
 	return db, nil
 }
 
@@ -109,57 +105,57 @@ func (repo *Repo) InsertCredentials(ctx context.Context, cred *model.Credentials
 	)
 }
 
-// InsertPaymentCard - метод для вставки PaymentCard.
-func (repo *Repo) InsertPaymentCard(ctx context.Context, card *model.PaymentCard) error {
-	query := `
-		INSERT INTO payment_card (user_id, number, exp_month, exp_year, cvv, alias, info)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-	`
+// // InsertPaymentCard - метод для вставки PaymentCard.
+// func (repo *Repo) InsertPaymentCard(ctx context.Context, card *model.PaymentCard) error {
+// 	query := `
+// 		INSERT INTO payment_card (user_id, number, exp_month, exp_year, cvv, alias, info)
+// 		VALUES ($1, $2, $3, $4, $5, $6, $7)
+// 	`
 
-	return repo.execInsert(
-		ctx,
-		query,
-		card.UUID,
-		card.Number,
-		card.ExpMonth,
-		card.ExpYear,
-		card.CVV,
-		card.Alias,
-		card.Info,
-	)
-}
+// 	return repo.execInsert(
+// 		ctx,
+// 		query,
+// 		card.UUID,
+// 		card.Number,
+// 		card.ExpMonth,
+// 		card.ExpYear,
+// 		card.CVV,
+// 		card.Alias,
+// 		card.Info,
+// 	)
+// }
 
-// InsertBinary - метод для вставки Binary.
-func (repo *Repo) InsertBinary(ctx context.Context, bin *model.Binary) error {
-	query := `
-		INSERT INTO binary_data (user_id, data, alias, info)
-		VALUES ($1, $2, $3, $4)
-	`
+// // InsertBinary - метод для вставки Binary.
+// func (repo *Repo) InsertBinary(ctx context.Context, bin *model.Binary) error {
+// 	query := `
+// 		INSERT INTO binary_data (user_id, data, alias, info)
+// 		VALUES ($1, $2, $3, $4)
+// 	`
 
-	return repo.execInsert(
-		ctx,
-		query,
-		bin.UUID,
-		bin.Data,
-		bin.Alias,
-		bin.Info,
-	)
-}
+// 	return repo.execInsert(
+// 		ctx,
+// 		query,
+// 		bin.UUID,
+// 		bin.Data,
+// 		bin.Alias,
+// 		bin.Info,
+// 	)
+// }
 
-// InsertText - метод для вставки Text.
-func (repo *Repo) InsertText(ctx context.Context, text *model.Text) error {
-	query := `
-		INSERT INTO text_data (user_id, data, alias, info)
-		VALUES ($1, $2, $3, $4)
-	`
+// // InsertText - метод для вставки Text.
+// func (repo *Repo) InsertText(ctx context.Context, text *model.Text) error {
+// 	query := `
+// 		INSERT INTO text_data (user_id, data, alias, info)
+// 		VALUES ($1, $2, $3, $4)
+// 	`
 
-	return repo.execInsert(
-		ctx,
-		query,
-		text.UUID,
-		text.Data,
-		text.Alias,
-		text.Info,
-	)
-}
+// 	return repo.execInsert(
+// 		ctx,
+// 		query,
+// 		text.UUID,
+// 		text.Data,
+// 		text.Alias,
+// 		text.Info,
+// 	)
+// }
 

@@ -1,8 +1,8 @@
+// Package input - модуль для работы с вводом данных.
 package input
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"os"
 	"slices"
@@ -26,26 +26,8 @@ func New() Input {
 // Parser - парсер аргументов командной строки.
 func (c *Input) Parser() {
 	var (
-		method, item string
-		values       []string
+		method, item, value string
 	)
-
-	flag.StringVar(&method, "method", "", "method request")
-	flag.StringVar(&item, "item", "", "item type")
-	flag.Func("values", "Comma-separated list of values", func(s string) error {
-		values = strings.Split(s, ", ")
-		return nil
-	})
-
-	flag.Parse()
-
-	if method != "" && len(values) > 0 {
-		c.Method = cli.Method(method)
-		c.Item = cli.Item(item)
-		c.Values = values
-		return
-	}
-
 	// Иначе используем интерактивный ввод
 	reader := bufio.NewReader(os.Stdin)
 
@@ -61,7 +43,7 @@ func (c *Input) Parser() {
 	method, _ = reader.ReadString('\n')
 	method = strings.TrimSpace(method)
 
-	if !slices.Contains([]cli.Method{cli.MethodRegister, cli.MethodLogin}, cli.Method(method)) {
+	if slices.Contains([]cli.Method{cli.MethodAdd, cli.MethodGet, cli.MethodDelete}, cli.Method(method)) {
 		fmt.Printf(
 			"Введите тип данных, %s, %s, %s или %s: ",
 			cli.ItemCredentials,
@@ -73,10 +55,11 @@ func (c *Input) Parser() {
 		item = strings.TrimSpace(item)
 	}
 
-	fmt.Print("Введите значения через запятую: ")
-	var value string
-	value, _ = reader.ReadString('\n')
-	value = strings.TrimSpace(value)
+	if slices.Contains([]cli.Method{cli.MethodAdd, cli.MethodGet, cli.MethodDelete, cli.MethodRegister, cli.MethodLogin}, cli.Method(method)) {
+		fmt.Print("Введите значения через запятую: ")
+		value, _ = reader.ReadString('\n')
+		value = strings.TrimSpace(value)
+	}
 
 	c.Method = cli.Method(method)
 	c.Item = cli.Item(item)

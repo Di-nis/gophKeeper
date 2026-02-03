@@ -145,3 +145,12 @@ func (t *Text) GetRaw() string { return t.Data + t.Info }
 
 // SetAlias - устанавливает алиас.
 func (t *Text) SetAlias(a string) { t.Alias = a }
+
+
+// Common - общие данные.
+type Common struct {
+	Credentials []*Credentials
+	PaymentCard []*PaymentCard
+	Binary      []*Binary
+	Text        []*Text
+}
