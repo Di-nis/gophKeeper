@@ -1,0 +1,16 @@
+{
+    "server_address_HTTP": "localhost:8080",
+    "base_url_HTTP": "http://localhost:8080",
+    "server_address_gRPC": "localhost:8082",
+    "base_url_gRPC": "http://localhost:8082",
+    "log_level": "info",
+    "database_dsn": "",
+    "cert_file_path": "C:\\Users\\denis\\cert.pem",
+    "key_file_path": "C:\\Users\\denis\\private.pem",
+    "enable_https": false,
+    "shutdown_timeout": "10s",
+    "token_storage": "token.txt",
+    "database_path": "client.db",
+    "HTTP_client_timeout": "5s",
+    "max_idle_conns_per_host": 5
+}

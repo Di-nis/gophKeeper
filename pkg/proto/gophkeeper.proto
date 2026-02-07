@@ -1,0 +1,143 @@
+edition = "2023";
+
+package proto;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/Di-nis/gophKeeper/pkg/proto";
+
+service GophKeeperService {
+  rpc AddCredentials(AddCredentialsRequest) returns (AddCredentialsResponse);
+  rpc GetCredentials(GetCredentialsRequest) returns (GetCredentialsResponse);
+  rpc DelCredentials(DelCredentialsRequest) returns (google.protobuf.Empty);
+
+  rpc AddPaymentCard(AddPaymentCardRequest) returns (AddPaymentCardResponse);
+  rpc GetPaymentCard(GetPaymentCardRequest) returns (GetPaymentCardResponse);
+  rpc DelPaymentCard(DelPaymentCardRequest) returns (google.protobuf.Empty);
+
+  rpc AddBinary(AddBinaryRequest) returns (AddBinaryResponse);
+  rpc GetBinary(GetBinaryRequest) returns (GetBinaryResponse);
+  rpc DelBinary(DelBinaryRequest) returns (google.protobuf.Empty);
+
+  rpc AddText(AddTextRequest) returns (AddTextResponse);
+  rpc GetText(GetTextRequest) returns (GetTextResponse);
+  rpc DelText(DelTextRequest) returns (google.protobuf.Empty);
+
+  rpc ListUserData(google.protobuf.Empty) returns (UserDataResponse);
+}
+
+message AddCredentialsRequest {
+  Credentials credentials = 1;
+}
+
+message AddCredentialsResponse {
+  string alias = 1;
+}
+
+message GetCredentialsRequest {
+  string alias = 1;
+}
+
+message GetCredentialsResponse {
+  Credentials credentials = 1;
+}
+
+message DelCredentialsRequest {
+  string alias = 1;
+}
+
+message AddPaymentCardRequest {
+  PaymentCard card = 1;
+}
+
+message AddPaymentCardResponse {
+  string alias = 1;
+}
+
+message GetPaymentCardRequest {
+  string alias = 1;
+}
+
+message GetPaymentCardResponse {
+  PaymentCard card = 1;
+}
+
+message DelPaymentCardRequest {
+  string alias = 1;
+}
+
+message AddBinaryRequest {
+  Binary bin = 1;
+}
+
+message AddBinaryResponse {
+  string alias = 1;
+}
+
+message GetBinaryRequest {
+  string alias = 1;
+}
+
+message GetBinaryResponse {
+  Binary bin = 1;
+}
+
+message DelBinaryRequest {
+  string alias = 1;
+}
+
+message AddTextRequest {
+  Text text = 1;
+}
+
+message AddTextResponse {
+  string alias = 1;
+}
+
+message GetTextRequest {
+  string alias = 1;
+}
+
+message GetTextResponse {
+  Text text = 1;
+}
+
+message DelTextRequest {
+  string alias = 1;
+}
+
+message UserDataResponse {
+  repeated Credentials credentials = 1;
+  repeated PaymentCard paymentCard = 2;
+  repeated Binary binary = 3;
+  repeated Text text = 4;
+}
+
+message Credentials {
+  string login = 1;
+  string password = 2;
+  string alias = 3;
+  string info = 4;
+}
+
+message PaymentCard {
+  string number = 1;
+  string expMonth = 2;
+  string expYear = 3;
+  string cvv = 4;
+  string holder = 5;
+  string alias = 6;
+  string info = 7;
+}
+
+message Binary {
+  bytes data = 1;
+  string alias = 2;
+  string info = 3;
+}
+
+message Text {
+  string data = 1;
+  string alias = 2;
+  string info = 3;
+}

@@ -1,0 +1,161 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API для хранения секретов",
+        "title": "GophKeeper",
+        "contact": {
+            "name": "Denis Smirnov",
+            "email": "di-nis@ya.ru"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/login": {
+            "post": {
+                "description": "Получение токена для авторизации",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "данные пользователя",
+                        "name": "Auth",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Auth"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {
+                            "Set-Cookie": {
+                                "type": "string",
+                                "description": "name=auth_user; value=your_token; expires=Mon, 02 Feb 2026 13:08:01 GMT; Path=/; Domain=localhost; session_id=abc123; HttpOnly secure=true"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "неверный запрос"
+                    },
+                    "404": {
+                        "description": "пользователь с таким логином не найден"
+                    },
+                    "500": {
+                        "description": "внутренная ошибка сервера"
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "description": "Проверка сервиса",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test"
+                ],
+                "summary": "Ping",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "внутренная ошибка сервера"
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Регистрация пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "description": "данные пользователя",
+                        "name": "Auth",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Auth"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "неверный запрос"
+                    },
+                    "409": {
+                        "description": "пользователя с таким логином уже существует"
+                    },
+                    "500": {
+                        "description": "внутренная ошибка сервера"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Auth": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string",
+                    "example": "your_username"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "your_password"
+                },
+                "passwordHash": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/model.Role"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Role": {
+            "type": "string",
+            "enum": [
+                "user",
+                "admin"
+            ],
+            "x-enum-varnames": [
+                "RoleUser",
+                "RoleAdmin"
+            ]
+        }
+    }
+}
